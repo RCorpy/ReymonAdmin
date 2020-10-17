@@ -10,7 +10,7 @@ function App() {
       <div class="wrapper">
         <Header />
         <Menu />
-        <Content />
+        <Content title="R-Dashboard"/>
         <Footer />
       </div>
     </div>
