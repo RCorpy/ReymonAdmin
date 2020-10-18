@@ -2,6 +2,7 @@ import React from "react";
 import Card from "./contentComponents/Card"
 
 export default function Content({title}) {
+
   return (
     <div className="content-wrapper">
       {/* Content Header (Page header) */}
@@ -22,11 +23,11 @@ export default function Content({title}) {
         <div className="container-fluid">
           <div className="row">
             <div className="col-lg-12">
-              <Card
-                title="Big card"
-                >
-                  BIG BOY CARD
-                </Card>
+              <Card title="Big card">
+                <div class="position-relative mb-4">
+                  <canvas id="reymon-chart" height="200"></canvas> {/* esto ha de ser de otra manera */}
+                </div>
+              </Card>
             </div>
             <div className="col-lg-6">
               <Card 

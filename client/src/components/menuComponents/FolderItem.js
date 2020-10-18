@@ -1,6 +1,7 @@
 import React from 'react'
+import {Link} from 'react-router-dom'
 
-export default function FolderItem({href, icon, text, spanText, spanBadge}) {
+export default function FolderItem({to, icon, text, spanText, spanBadge}) {
     const iClassName = `far nav-icon ${icon || "fa-circle"}` // can add colours with text-danger, text-info, text-danger, text-warning
     const getSpan = () => {
         if(spanText){
@@ -10,13 +11,13 @@ export default function FolderItem({href, icon, text, spanText, spanBadge}) {
     }
     return (
         <li className="nav-item">
-            <a href={href} className="nav-link">
+            <Link to={to} className="nav-link">
             <i className={iClassName} />
             <p>
             {text}
             {getSpan()}
             </p>
-            </a>
+            </Link>
         </li>
     )
 }

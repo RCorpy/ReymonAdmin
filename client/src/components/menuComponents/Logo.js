@@ -1,8 +1,9 @@
 import React from 'react'
+import {Link} from 'react-router-dom'
 
-export default function Logo({link, src, text}) {
+export default function Logo({to, src, text}) {
     return (
-        <a href={link} className="brand-link">
+        <Link to={to} className="brand-link">
         <img
           src={src}
           alt="AdminLTE Logo"
@@ -10,6 +11,6 @@ export default function Logo({link, src, text}) {
           style={{ opacity: ".8" }}
         />
         <span className="brand-text font-weight-light">{text}</span>
-      </a>
+      </Link>
     )
 }

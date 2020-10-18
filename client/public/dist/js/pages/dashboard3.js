@@ -73,8 +73,8 @@ $(function () {
     }
   })
 
-  var $visitorsChart = $('#visitors-chart')
-  var visitorsChart  = new Chart($visitorsChart, {
+  var $reymonChart = $('#reymon-chart')
+  var reymonChart  = new Chart($reymonChart, {
     data   : {
       labels  : ['18th', '20th', '22nd', '24th', '26th', '28th', '30th'],
       datasets: [{

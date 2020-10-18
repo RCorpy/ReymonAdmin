@@ -1,6 +1,7 @@
 import React from 'react'
+import {Link} from 'react-router-dom'
 
-export default function User({src, name}) {
+export default function User({src, name, to}) {
     return (
         <div className="user-panel mt-3 pb-3 mb-3 d-flex">
           <div className="image">
@@ -11,9 +12,9 @@ export default function User({src, name}) {
             />
           </div>
           <div className="info">
-            <a href="#" className="d-block">
+            <Link to={to} className="d-block">
               {name}
-            </a>
+            </Link>
           </div>
         </div>
     )

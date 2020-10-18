@@ -1,6 +1,7 @@
 import React from 'react'
+import {Link} from 'react-router-dom'
 
-export default function Folder({text, icon, spanText, active, spanBadge, children}) {
+export default function Folder({text, icon, spanText, active, spanBadge, to, children}) {
     const folderIcon = `nav-icon ${icon || "fas fa-tachometer-alt"}`
     const getSpan = () => {
         if(spanText){
@@ -10,14 +11,14 @@ export default function Folder({text, icon, spanText, active, spanBadge, childre
     }
     return (
             <li className="nav-item has-treeview">
-              <a href="#" className="nav-link active">
+              <Link to={to} className="nav-link active">
                 <i className={folderIcon} />
                 <p>
                   {text}
                   <i className="right fas fa-angle-left" />
                   {getSpan()}
                 </p>
-              </a>
+              </Link>
               <ul className="nav nav-treeview">
                 {children}
               </ul>
