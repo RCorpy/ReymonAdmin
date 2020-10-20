@@ -18,17 +18,18 @@ export default function Menu() {
         <User src={"/dist/img/user2-160x160.jpg"} name={"Reymon"} to="/RR" />
         {/* Sidebar Menu */}
         <SideNavBar>
-          <Folder text={"Dashboards"} spanText="hello">
-              <FolderItem to={"./index.html"} text={"first Dash"}/>
-              <FolderItem to={"./index2.html"} text={"second Dash"}/>
-              <FolderItem to={"./index3.html"} text={"third Dash"}/>
+          <Folder text="Dashboard" spanText="hello">
+              <FolderItem to={"/"} text={"first Dash"}/>
+              <FolderItem to={"/"} text={"second Dash"}/>
+              <FolderItem to={"/"} text={"third Dash"}/>
           </ Folder>
           <GroupTitle text="EXAMPLES" />
-          <FolderItem to="pages/widgets.html" text="Widgets" icon="fas fa-th"/>
-          <Folder text={"Dashboards"}>
-              <FolderItem to={"./index.html"} text={"first Dash"}/>
-              <FolderItem to={"./index2.html"} text={"second Dash"}/>
-              <FolderItem to={"./index3.html"} text={"third Dash"}/>
+          <FolderItem to="/RR" text="Widgets" icon="fas fa-th"/>
+
+          <Folder text="Charts">
+              <FolderItem to={"/Charts"} text={"first Dash"}/>
+              <FolderItem to={"/Charts"} text={"second Dash"}/>
+              <FolderItem to={"/Charts"} text={"third Dash"}/>
           </ Folder>
         </ SideNavBar>
         {/* /.sidebar-menu */}

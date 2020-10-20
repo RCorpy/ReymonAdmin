@@ -1,7 +1,8 @@
 import React from 'react';
 import Header from './components/Header'
 import Menu from './components/Menu'
-import Content from './components/Content'
+import Dashboard from './components/Dashboard'
+import Charts from './components/Charts'
 import Footer from './components/Footer'
 import {Route, Switch, BrowserRouter } from 'react-router-dom'
 
@@ -13,8 +14,9 @@ function App() {
         <Header />
         <Menu />
         <Switch>
-          <Route path="/RR" render={()=>(<Content title="RR-Dashboard" />)} />
-          <Route path="/" render={()=>(<Content title="R-Dashboard" />)} />
+          <Route path="/RR" render={()=>(<Dashboard title="R-Dashboard" />)} />
+          <Route path="/Charts" render={()=>(<Charts title="R-Dashboard" />)} />
+          <Route path="/" render={()=>(<Charts title="R-Dashboard" />)} />
         </Switch>
         <Footer />
       </div>
