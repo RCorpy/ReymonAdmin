@@ -1,5 +1,6 @@
 import React from "react";
 import Card from "./contentComponents/Card"
+import {Table} from "react-bootstrap"
 
 export default function Content({title}) {
 
@@ -25,45 +26,34 @@ export default function Content({title}) {
             <div className="col-lg-12">
               <Card title="Big card">
                 <div class="position-relative mb-4">
-                  <canvas id="reymon-chart" height="200"></canvas> {/* esto ha de ser de otra manera */}
+                  <Table bordered hover>
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>First Name</th>
+                      <th>Last Name</th>
+                      <th>Username</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>1</td>
+                      <td>Mark</td>
+                      <td>Otto</td>
+                      <td>@mdo</td>
+                    </tr>
+                    <tr>
+                      <td>2</td>
+                      <td>Jacob</td>
+                      <td>Thornton</td>
+                      <td>@fat</td>
+                    </tr>
+                  </tbody>
+                  </Table>
                 </div>
               </Card>
             </div>
-            <div className="col-lg-6">
-              <Card 
-                title="Online Store Visitors" 
-                headerButtons={[{text: "View MA report"}, {icon:"fas fa-download", href: "##"}, {icon:"fas fa-bars"}]}
-                >
-                  Card Body, need tables urgent
-              </Card>
-              {/* /.card */}
-              <Card 
-                title="Products" 
-                headerButtons={[{icon:"fas fa-download", href: "##"}, {icon:"fas fa-bars"}]}
-                >
-                  Card Body, need tables urgent
-              </Card>
-              {/* /.card */}
-            </div>
-            {/* /.col-md-6 */}
-            <div className="col-lg-6">
-              <Card 
-                title="Sales" 
-                headerButtons={[{text:"View Report"}]}
-                >
-                  Card Body, need tables urgent
-              </Card>
-              {/* /.card */}
-              <Card 
-                title="Online Store Overview" 
-                headerButtons={[{icon:"fas fa-download", href: "##"}, {icon:"fas fa-bars"}]}
-                >
-                  Card Body, need tables urgent
-              </Card>
-            </div>
-            {/* /.col-md-6 */}
           </div>
-          {/* /.row */}
         </div>
         {/* /.container-fluid */}
       </div>
