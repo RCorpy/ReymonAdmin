@@ -1,8 +1,47 @@
-import React from "react";
+import React, {useState, useEffect} from "react";
 import Card from "./contentComponents/Card"
 import {Table} from "react-bootstrap"
 
+const URL = process.env.URL || 'http://localhost:3000/'
+
 export default function Content({title}) {
+
+  const [tableValues, setTableValues] = useState([
+    {       
+      name: "Demo Customer",
+      createdAt: new Date(),
+      category:"customer",
+      productName:"product1",
+      deliveryDate: new Date(),
+      price: 1,
+      amount:1,
+      total: 1
+    }
+  ]) 
+
+  useEffect(()=>{
+    fetch(`${URL}orders`)
+    .then(res=>res.json())
+    .then(data=>setTableValues(data))
+  },[])
+
+  const createTableContent = () =>{
+    return tableValues.map(order=>{
+      return (
+      <tr>
+        <td>{order.name}</td>
+        <td>{order.createdAt.getDate() + "-"+ parseInt(order.createdAt.getMonth()+1) +"-"+order.createdAt.getFullYear()}</td>
+        <td>{order.category}</td>
+        <td>{order.productName}</td>
+        <td>{order.deliveryDate.getDate() + "-"+ parseInt(order.deliveryDate.getMonth()+1) +"-"+order.deliveryDate.getFullYear()}</td>
+        <td>{order.price}</td>
+        <td>{order.amount}</td>
+        <td>{order.total}</td>
+        <td>{order.completed || false}</td>
+      </tr>)
+    })
+
+  }
 
   return (
     <div className="content-wrapper">
@@ -29,25 +68,19 @@ export default function Content({title}) {
                   <Table bordered hover>
                   <thead>
                     <tr>
-                      <th>#</th>
-                      <th>First Name</th>
-                      <th>Last Name</th>
-                      <th>Username</th>
+                      <th>name</th>
+                      <th>createdAt</th>
+                      <th>category</th>
+                      <th>productName</th>
+                      <th>deliveryDate</th>
+                      <th>price</th>
+                      <th>amount</th>
+                      <th>total</th>
+                      <th>completed</th>
                     </tr>
                   </thead>
                   <tbody>
-                    <tr>
-                      <td>1</td>
-                      <td>Mark</td>
-                      <td>Otto</td>
-                      <td>@mdo</td>
-                    </tr>
-                    <tr>
-                      <td>2</td>
-                      <td>Jacob</td>
-                      <td>Thornton</td>
-                      <td>@fat</td>
-                    </tr>
+                    {createTableContent()}
                   </tbody>
                   </Table>
                 </div>

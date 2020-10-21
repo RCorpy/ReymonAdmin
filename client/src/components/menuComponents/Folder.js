@@ -11,7 +11,7 @@ export default function Folder({text, icon, spanText, active, spanBadge, to, chi
     }
     return (
             <li className="nav-item has-treeview">
-              <Link to={to} className="nav-link"> {/*Can use "active" class to highlight it*/}
+              <Link to={to || '/'} className="nav-link"> {/*Can use "active" class to highlight it*/}
                 <i className={folderIcon} />
                 <p>
                   {text}
