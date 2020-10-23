@@ -2,6 +2,7 @@ const path = require('path')
 const http = require('http')
 const express = require("express")
 const mongoose = require('mongoose')
+const bodyParser = require('body-parser')
 const OrderModel = require('./models/orderModel')
 const ProductModel = require('./models/productModel')
 const ClientModel = require('./models/clientModel')
@@ -13,7 +14,10 @@ const server = http.createServer(app)
 app.use(express.static(path.join(__dirname, 'client/build')))
 
 app.use(express.json());
+
 app.use(express.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: true }));
+
 
 const uri = "mongodb+srv://RCorp:44442222@cluster0.b41r5.mongodb.net/radmin?retryWrites=true&w=majority";
 mongoose.connect(uri, { useNewUrlParser: true , useUnifiedTopology: true })
@@ -86,35 +90,39 @@ app.post('/newclient', async (req, res) => {
     newEntry.save()
 })
 
-//delete
-
-app.post('/deleteorder/:id', async (req, res) => {
-    let deleteEntry = await OrderModel.findById({id: req.params.id}) //no se si funcionara bien el findById
-    deleteEntry.delete()
-})
-
-app.post('/deleteproduct/:id', async (req, res) => {
-    let deleteEntry = await ProductModel.findById({id: req.params.id})
-    deleteEntry.delete()
-})
-
-app.post('/deleteclient/:id', async (req, res) => {
-    let deleteEntry = await ClientModel.findById({id: req.params.id})
-    deleteEntry.delete()
-})
-
 //modify, hay que buscar como se hace
 
-app.post('/modifyorder/:id', async (req, res) => {
-    let modifyEntry = await OrderModel.findById({id: req.params.id})
+app.post('/modifyorder', async (req, res) => {
+    console.log(req.body)
+    let modifyEntry = await OrderModel.findByIdAndUpdate(req.body.id, req.body.data)
+    res.send(modifyEntry)
+    
 })
 
-app.post('/api/:id', async (req, res) => {
-    let modifyEntry = await ProductModel.findById({id: req.params.id})
+app.post('/modifyproduct', async (req, res) => {
+    let modifyEntry = await ProductModel.findByIdAndUpdate(req.body.id, req.body.data)
 })
 
-app.post('/api/:id', async (req, res) => {
-    let modifyEntry = await ClientModel.findById({id: req.params.id})
+app.post('/modifyclient', async (req, res) => {
+    let modifyEntry = await ClientModel.findByIdAndUpdate(req.body.id, req.body.data)
+})
+
+//delete
+
+
+app.post('/deleteorder', async (req, res) => {
+    let deleteEntry = await OrderModel.findByIdAndDelete(req.body.id)
+    deleteEntry.delete()
+})
+
+app.post('/deleteproduct', async (req, res) => {
+    let deleteEntry = await ProductModel.findByIdAndDelete(req.body.id)
+    deleteEntry.delete()
+})
+
+app.post('/deleteclient', async (req, res) => {
+    let deleteEntry = await ClientModel.findByIdAndDelete(req.body.id)
+    deleteEntry.delete()
 })
 
 
@@ -125,19 +133,3 @@ app.get("*", (req, res)=>{
 const PORT = process.env.PORT || 3000
 server.listen(PORT, () => console.log(`Server running on ${PORT}`))
 
-/*
-app.get('/api', async (req, res) => {
-    const data = await Model.find()
-    res.json(data)
-})
-
-app.post('/api', async (req, res) => {
-    let newEntry = await new Model(req.body)
-    newEntry.save()
-})
-
-app.post('/api/:id', async (req, res) => {
-    let deleteEntry = await Model.findOne({newID: req.params.id})
-    deleteEntry.delete()
-})
-*/
