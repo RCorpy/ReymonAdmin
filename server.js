@@ -27,10 +27,10 @@ mongoose.connection.on('connected', async () =>{
 
     let order={
         name: "Reymon san",
-        createdAt: new Date(),
+        createdAt: "2020-10-10",
         category:"customer",
         productName:"product4",
-        deliveryDate: new Date(),
+        deliveryDate: "2020-10-10",
         price: 1,
         amount:20,
         total: 10

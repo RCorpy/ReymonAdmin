@@ -2,24 +2,34 @@ import React, {useState, useEffect} from "react";
 import Card from "../contentComponents/Card"
 import {Table} from "react-bootstrap"
 import {fetchModifyOrder, fetchDeleteOrder} from '../functions/fetchFunctions'
+import Validator from '../functions/validators'
 
 const URL = process.env.URL || 'http://localhost:3000/'
+const validate = new Validator()
+
+const EXAMPLE_ORDER = {
+  _id: "qqewqyuweoq",       
+  name: "Demo Customer",
+  location: "Valencia",
+  category: "HS100",
+  floorType: "hormigon",
+  productList: [{name: "HS100", amount: "2", price: 27, kit: "20Kgs"}, {name: "Disolvente", amount: "1", price: 3, kit: "1L"}],
+  deliveryDate: "2020-10-21",
+  area: 200,
+  total: 1,
+  complete: false
+}
+
+
 
 export default function OrdersDashboard({title}) {
 
-  const [tableValues, setTableValues] = useState([
-    {
-      _id: "qqewqyuweoq",       
-      name: "Demo Customer",
-      createdAt: "2020-10-21T08:52:51.155+00:00",
-      category:"customer",
-      productName:"product1",
-      deliveryDate: "2020-10-21T08:52:51.155+00:00",
-      price: 1,
-      amount:1,
-      total: 1
-    }
-  ]) 
+  const [showMyAsideDiv, setShowMyAsideDiv]=useState(false)
+  const [tableValues, setTableValues] = useState([EXAMPLE_ORDER])
+  const [toModifyValues, setToModifyValues] = useState(EXAMPLE_ORDER) 
+
+  const myAsideDivStyle = showMyAsideDiv ? {display: "inline"} :  {display: "none"}
+
 
   useEffect(()=>{
     fetch(`${URL}orders`)
@@ -32,12 +42,26 @@ export default function OrdersDashboard({title}) {
     setTableValues((prev)=>{
       return prev.map((mappedOrder)=>{
         if(mappedOrder._id === order._id){
-          return modifiedOrder
+          let updatedProductList = modifiedOrder.productList.filter(product=> product.name !== "new").filter(product => product.name !=="")
+          console.log(updatedProductList)
+          return {...modifiedOrder, productList: updatedProductList}
         }
         else {return mappedOrder}
       })
     })
   } 
+
+  const getNewProductList = (index, name, price, amount, kit) => {
+    let previousProductList = toModifyValues.productList
+    previousProductList[index]={name: name, price: price, amount: amount}
+    console.log(previousProductList)
+    return previousProductList
+  }
+
+  const makeNewProduct = () => {
+    setToModifyValues(prev=>({...prev, productList: [...prev.productList, {name: "new", price: 0, amount: 0, kit: 0}]}))
+
+  }
 
   const deleteOrder = (order) => {
     fetchDeleteOrder(order)
@@ -46,24 +70,49 @@ export default function OrdersDashboard({title}) {
     })
   } 
 
+
   const createTableContent = () =>{
     return tableValues.map(order=>{
+        const normalTableClick = ()=>{
+        setShowMyAsideDiv(!showMyAsideDiv)
+        setToModifyValues(order)
+  }
       return (
       <tr>
-        <td>{order.name}</td>
-        <td>{order.category}</td>
-        <td>{order.productName}</td>
-        <td>{order.deliveryDate.split("T")[0]}</td> {/* because it recieves it as a string from DB */}
-        <td>{order.price}</td>
-        <td>{order.amount}</td>
-        <td>{order.total}</td>
-        <td>{order.completed || "false"}</td>
-        <td><div style={{display:"flex", justifyContent:"center"}} onClick={()=>modifyOrder(order, {...order, completed: !order.completed})}><i class="far fa-edit"></i></div></td>
-        <td><div style={{display:"flex", justifyContent:"center"}} onClick={()=>deleteOrder(order)}><i class="fas fa-trash-alt"></i></div></td>
+        <td onClick={normalTableClick}>{order._id}</td>
+        <td onClick={normalTableClick}>{order.name}</td>
+        <td onClick={normalTableClick}>{order.location}</td>
+        <td onClick={normalTableClick}>{order.category}</td>
+        <td onClick={normalTableClick}>{order.floorType}</td>
+        <td onClick={normalTableClick}>{order.area}</td>
+        <td onClick={normalTableClick}>{order.deliveryDate}</td> 
+        <td onClick={normalTableClick}>{order.total}</td>
+        <td onClick={()=>{modifyOrder(order, {...order, completed: !order.completed})}}>{order.completed ? "true": "false"}</td>
+        <td><div style={{display:"flex", justifyContent:"center"}} onClick={()=>deleteOrder(order)}><i class="fas fa-trash-alt"></i></div></td> {/*changed deleteOrder(order) to setShow*/}
       </tr>)
     })
   }
 
+
+  const handleAsideSubmit = (e) => {
+    e.preventDefault()
+    if(true ||
+      validate.number(toModifyValues.price) && 
+      validate.number(toModifyValues.total) && 
+      validate.notEmpty(toModifyValues.name) && 
+      validate.notEmpty(toModifyValues.category) && 
+      validate.notEmpty(toModifyValues.location) && 
+      validate.notEmpty(toModifyValues.productList) && 
+      validate.date(toModifyValues.deliveryDate)
+      )
+      {
+      modifyOrder(toModifyValues, toModifyValues)
+      setShowMyAsideDiv(false)
+      }
+    else{
+      console.log("error")
+    }
+  }
 
 
   return (
@@ -91,16 +140,15 @@ export default function OrdersDashboard({title}) {
                   <Table bordered hover>
                   <thead>
                     <tr>
+                      <th>ID</th>
                       <th>name</th>
-                      {/*<th>createdAt</th>*/}
+                      <th>location</th>
                       <th>category</th>
-                      <th>productName</th>
+                      <th>floor</th>
+                      <th>area</th>
                       <th>deliveryDate</th>
-                      <th>price</th>
-                      <th>amount</th>
                       <th>total</th>
                       <th>completed</th>
-                      <th>edit</th>
                       <th>delete</th>
 
                     </tr>
@@ -111,12 +159,89 @@ export default function OrdersDashboard({title}) {
                   </Table>
                 </div>
               </Card>
+              
             </div>
+            
           </div>
         </div>
+        
         {/* /.container-fluid */}
+
+      </div>
+      <div className="wrapper myasidediv col-lg-6" style={myAsideDivStyle}>
+        <div className="zindex1500">
+          <h4>Modifying {toModifyValues._id}</h4>
+          <form className="asideform" onSubmit={handleAsideSubmit}>
+          <div className="form-group">
+            <label>ID</label>
+            <input type="text" onChange={(e)=>setToModifyValues({...toModifyValues ,_id:e.target.value})} value={toModifyValues._id}/>
+            {/*<small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>*/}
+          </div>
+          <div className="form-group">
+            <label>Name</label>
+            <input type="text" onChange={(e)=>setToModifyValues({...toModifyValues ,name:e.target.value})} value={toModifyValues.name}/>
+          </div>
+          <div className="form-group">
+            <label>Location</label>
+            <input type="text" onChange={(e)=>setToModifyValues({...toModifyValues ,location:e.target.value})} value={toModifyValues.location}/>
+          </div>
+          <div className="form-group">
+            <label>Category</label>
+            <input type="text" onChange={(e)=>setToModifyValues({...toModifyValues ,category:e.target.value})} value={toModifyValues.category} />
+          </div>
+          <div className="form-group">
+            <label>Floor Type</label>
+            <input type="text" onChange={(e)=>setToModifyValues({...toModifyValues ,floorType:e.target.value})} value={toModifyValues.floorType}/>
+          </div>
+
+          <div className="form-group">
+            <label>Delivery Date</label>
+            <input type="text" onChange={(e)=>setToModifyValues({...toModifyValues ,deliveryDate:e.target.value})} value={toModifyValues.deliveryDate} />
+          </div>
+          <div className="form-group">
+            <label>Area</label>
+            <input type="number" onChange={(e)=>setToModifyValues({...toModifyValues ,area:e.target.value})} value={toModifyValues.area} />
+          </div>
+          <div className="form-group">
+            <label>Product List</label>
+            <button type="button" onClick={makeNewProduct} style={{margin: "0px"}}>Add product</button>
+          </div>
+          {/*PRODUCT LIST*/}
+            <Table bordered hover>
+                    <thead>
+                      <tr>
+                        <th>name</th>
+                        <th>amount</th>
+                        <th>price</th>
+                        <th>kit</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {toModifyValues.productList.map((product, index)=>(
+                        <tr>
+                          <td><input type="text" onChange={(e)=>setToModifyValues({...toModifyValues ,productList: getNewProductList(index, e.target.value, product.price, product.amount, product.kit)})} value={product.name} /></td>
+                          <td><input type="text" onChange={(e)=>setToModifyValues({...toModifyValues ,productList: getNewProductList(index, product.name, product.price, e.target.value, product.kit)})} value={product.amount} /></td>
+                          <td><input type="text" onChange={(e)=>setToModifyValues({...toModifyValues ,productList: getNewProductList(index, product.name, e.target.value, product.amount, product.kit)})} value={product.price} /></td>
+                          <td><input type="text" onChange={(e)=>setToModifyValues({...toModifyValues ,productList: getNewProductList(index, product.name, product.price, product.amount, e.target.value)})} value={product.kit} /></td>
+                        </tr>))}
+                    </tbody>
+            </Table>
+
+
+            {/*END OF PRODUCT LIST*/}
+          <div className="form-group" style={{marginTop: "10px"}}>
+            <label>Total</label>
+            <input type="number" onChange={(e)=>setToModifyValues({...toModifyValues ,total:e.target.value})} value={toModifyValues.total} />
+          </div>
+          <div className="form-group">
+            <button className="btn btn-primary" type="submit">Save</button>
+            <button className="btn btn-secondary" type="button" onClick={()=>setShowMyAsideDiv(false)}>Close</button>
+          </div>
+          </form>
+        </div>
       </div>
       {/* /.content */}
+      
     </div>
   );
 }

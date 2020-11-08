@@ -1,7 +1,6 @@
 import React from "react";
 import LeftLink from './headerComponents/LeftLink'
 import LeftContainer from './headerComponents/LeftContainer'
-import ToBeDropped from './headerComponents/ToBeDropped'
 import RightContainer from './headerComponents/RightContainer'
 
 
