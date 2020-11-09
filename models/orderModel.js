@@ -2,40 +2,48 @@
 const mongoose = require('mongoose')
 
 const Schema = new mongoose.Schema({
-    name:{
+    orderNumber:{
         type: String,
         required: true
     },
-    createdAt:{
-        type:String,
+    name:{
+        type: String,
         required: true
     },
     category:{
         type:String,
         required: true
     },
-    productName:{
-        type:String,
+    telephone:{
+        type: String,
+        required: true
+    },
+    productList:{
+        type:Array,
         required:true
     },
     deliveryDate:{
         type:String,
         required:true
     },
-    price:{
-        type:Number,
-        required:true
-    },
-    amount:{
-        type:Number,
-        required:true
-    },
-    total:{
+    discount:{
         type:Number,
         required:true
     },
     completed:{
         type:Boolean
+    },
+    area:{
+        type:Number,
+        required: true
+    },
+    floorType:{
+        type: String,
+        required:true
+    },
+    location:{
+        type:String,
+        required:true
     }
 
 })

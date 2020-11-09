@@ -33,7 +33,8 @@ mongoose.connection.on('connected', async () =>{
         deliveryDate: "2020-10-10",
         price: 1,
         amount:20,
-        total: 10
+        discount: 10,
+        completed: false
     }
 
     let product={

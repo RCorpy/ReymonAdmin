@@ -16,8 +16,10 @@ const EXAMPLE_ORDER = {
   productList: [{name: "HS100", amount: "2", price: 27, kit: "20Kgs"}, {name: "Disolvente", amount: "1", price: 3, kit: "1L"}],
   deliveryDate: "2020-10-21",
   area: 200,
-  total: 1,
-  complete: false
+  orderNumber: "01118601NN",
+  telephone:"456798",
+  discount: 1,
+  completed: false
 }
 
 
@@ -51,6 +53,10 @@ export default function OrdersDashboard({title}) {
     })
   } 
 
+  const getTotal = (order)=> {
+    return order.productList.reduce((accumulator, product)=>accumulator+(product.price*product.amount) , 0)
+  }
+
   const getNewProductList = (index, name, price, amount, kit) => {
     let previousProductList = toModifyValues.productList
     previousProductList[index]={name: name, price: price, amount: amount}
@@ -79,14 +85,16 @@ export default function OrdersDashboard({title}) {
   }
       return (
       <tr>
-        <td onClick={normalTableClick}>{order._id}</td>
+        <td onClick={normalTableClick}>{order.orderNumber}</td>
+        <td onClick={normalTableClick}>{order.telephone}</td>
         <td onClick={normalTableClick}>{order.name}</td>
         <td onClick={normalTableClick}>{order.location}</td>
         <td onClick={normalTableClick}>{order.category}</td>
         <td onClick={normalTableClick}>{order.floorType}</td>
         <td onClick={normalTableClick}>{order.area}</td>
         <td onClick={normalTableClick}>{order.deliveryDate}</td> 
-        <td onClick={normalTableClick}>{order.total}</td>
+        <td onClick={normalTableClick}>{order.discount}</td>
+        <td onClick={normalTableClick}>{getTotal(order)}</td>
         <td onClick={()=>{modifyOrder(order, {...order, completed: !order.completed})}}>{order.completed ? "true": "false"}</td>
         <td><div style={{display:"flex", justifyContent:"center"}} onClick={()=>deleteOrder(order)}><i class="fas fa-trash-alt"></i></div></td> {/*changed deleteOrder(order) to setShow*/}
       </tr>)
@@ -98,7 +106,7 @@ export default function OrdersDashboard({title}) {
     e.preventDefault()
     if(true ||
       validate.number(toModifyValues.price) && 
-      validate.number(toModifyValues.total) && 
+      validate.number(toModifyValues.discount) && 
       validate.notEmpty(toModifyValues.name) && 
       validate.notEmpty(toModifyValues.category) && 
       validate.notEmpty(toModifyValues.location) && 
@@ -140,13 +148,15 @@ export default function OrdersDashboard({title}) {
                   <Table bordered hover>
                   <thead>
                     <tr>
-                      <th>ID</th>
+                      <th>Order Number</th>
+                      <th>Telephone</th>
                       <th>name</th>
                       <th>location</th>
                       <th>category</th>
                       <th>floor</th>
                       <th>area</th>
                       <th>deliveryDate</th>
+                      <th>discount</th>
                       <th>total</th>
                       <th>completed</th>
                       <th>delete</th>
@@ -173,9 +183,13 @@ export default function OrdersDashboard({title}) {
           <h4>Modifying {toModifyValues._id}</h4>
           <form className="asideform" onSubmit={handleAsideSubmit}>
           <div className="form-group">
-            <label>ID</label>
-            <input type="text" onChange={(e)=>setToModifyValues({...toModifyValues ,_id:e.target.value})} value={toModifyValues._id}/>
-            {/*<small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>*/}
+            <label>Order Number</label>
+            <input type="text" onChange={(e)=>setToModifyValues({...toModifyValues ,orderNumber:e.target.value})} value={toModifyValues.orderNumber}/>
+             {/*<small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>*/}
+          </div>
+          <div className="form-group">
+            <label>Telephone</label>
+            <input type="text" onChange={(e)=>setToModifyValues({...toModifyValues ,telephone:e.target.value})} value={toModifyValues.telephone}/>
           </div>
           <div className="form-group">
             <label>Name</label>
@@ -230,8 +244,12 @@ export default function OrdersDashboard({title}) {
 
             {/*END OF PRODUCT LIST*/}
           <div className="form-group" style={{marginTop: "10px"}}>
+            <label>Discount</label>
+            <input type="number" onChange={(e)=>setToModifyValues({...toModifyValues ,discount:e.target.value})} value={toModifyValues.discount} />
+          </div>
+          <div className="form-group" style={{marginTop: "10px"}}>
             <label>Total</label>
-            <input type="number" onChange={(e)=>setToModifyValues({...toModifyValues ,total:e.target.value})} value={toModifyValues.total} />
+            <input type="number" value={getTotal(toModifyValues)} />
           </div>
           <div className="form-group">
             <button className="btn btn-primary" type="submit">Save</button>

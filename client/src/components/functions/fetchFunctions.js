@@ -10,15 +10,17 @@ const modifyOrder = (order, modifiedOrder) => {
       body: JSON.stringify(
         {
           id: order._id,
-          data: {
+          data: {    
             name: modifiedOrder.name,
-            createdAt: modifiedOrder.createdAt,
+            location: modifiedOrder.location,
             category: modifiedOrder.category,
-            productName: modifiedOrder.productName,
+            floorType: modifiedOrder.floorType,
+            productList: modifiedOrder.productList,
             deliveryDate: modifiedOrder.deliveryDate,
-            price: modifiedOrder.price,
-            amount: modifiedOrder.amount,
-            total: modifiedOrder.total,
+            area: modifiedOrder.area,
+            orderNumber: modifiedOrder.orderNumber,
+            telephone: modifiedOrder.telephone,
+            discount: modifiedOrder.discount,
             completed: modifiedOrder.completed
           }
         }
