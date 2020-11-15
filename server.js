@@ -3,9 +3,35 @@ const http = require('http')
 const express = require("express")
 const mongoose = require('mongoose')
 const bodyParser = require('body-parser')
-const OrderModel = require('./models/orderModel')
+const Order2019 = require('./models/order2019')
+const Order2020 = require('./models/order2020')
+const Order2021 = require('./models/order2021')
 const ProductModel = require('./models/productModel')
 const ClientModel = require('./models/clientModel')
+
+
+const XlsxPopulate = require('xlsx-populate');
+
+const fs = require("fs");
+const util = require("util");
+const readFileAsync = util.promisify(fs.readFile);
+const writeFileAsync = util.promisify(fs.writeFile);
+
+/*(async function() {
+
+    const exlBuf = await readFileAsync("PRESUPUESTO 6230.xlsx");
+    console.log(exlBuf)
+    XlsxPopulate.fromDataAsync(exlBuf)
+    .then(workbook => {
+        // Modify the workbook.
+        workbook.sheet("proforma").cell("D19").value(2);
+
+        // Write to file.
+        return workbook.toFileAsync("./out.xlsx");
+    });
+})()*/
+
+
 
 
 const app = express()
@@ -25,15 +51,17 @@ mongoose.connect(uri, { useNewUrlParser: true , useUnifiedTopology: true })
 mongoose.connection.on('connected', async () =>{
     console.log("connected!")
 
-    let order={
-        name: "Reymon san",
-        createdAt: "2020-10-10",
-        category:"customer",
-        productName:"product4",
-        deliveryDate: "2020-10-10",
-        price: 1,
-        amount:20,
-        discount: 10,
+    let order={      
+        name: "Demo Customer",
+        location: "Valencia",
+        category: "HS100",
+        floorType: "hormigon",
+        productList: [{name: "HS100", amount: "2", price: 27, kit: "20Kgs"}, {name: "Disolvente", amount: "1", price: 3, kit: "1L"}],
+        deliveryDate: "2021-10-21",
+        area: 200,
+        orderNumber: "01118601NN",
+        telephone:"456798",
+        discount: 1,
         completed: false
     }
 
@@ -46,7 +74,7 @@ mongoose.connection.on('connected', async () =>{
         name: "Randy Marsh",
     }
 
-    let newOrder = await new OrderModel(order)
+    let newOrder = await new Order2021(order)
     //newOrder.save()
 
     let newProduct = await new ProductModel(product)
@@ -59,8 +87,16 @@ mongoose.connection.on('connected', async () =>{
 
 //get
 
-app.get('/orders', async (req, res) => {
-    const data = await OrderModel.find()
+app.get('/orders/:year', async (req, res) => {
+    const year = req.params.year
+
+    let data2019 = data2020 = data2021 = []
+
+    if(year === "2019" || year==="all") {data2019 = await Order2019.find()}
+    if(year === "2020" || year==="all") {data2020 = await Order2020.find()}
+    if(year === "2021" || year==="all") {data2021 = await Order2021.find()}
+
+    const data= data2019.concat(data2020, data2021)
     res.json(data)
 })
 
@@ -77,7 +113,7 @@ app.get('/clients', async (req, res) => {
 //post
 
 app.post('/neworder', async (req, res) => {
-    let newEntry = await new OrderModel(req.body)
+    let newEntry = await new Order2020(req.body)
     newEntry.save()
 })
 
@@ -94,10 +130,21 @@ app.post('/newclient', async (req, res) => {
 //modify, hay que buscar como se hace
 
 app.post('/modifyorder', async (req, res) => {
-    console.log(req.body)
-    let modifyEntry = await OrderModel.findByIdAndUpdate(req.body.id, req.body.data)
-    res.send(modifyEntry)
-    
+    let year = req.body.data.deliveryDate.split("-")[0]
+    console.log(year)
+
+    if(year === "2019"){
+        let modifyEntry = await Order2019.findByIdAndUpdate(req.body.id, req.body.data)
+        res.send(modifyEntry)
+    }
+    if(year === "2020"){
+        let modifyEntry = await Order2020.findByIdAndUpdate(req.body.id, req.body.data)
+        res.send(modifyEntry)
+    }
+    if(year === "2021"){
+        let modifyEntry = await Order2021.findByIdAndUpdate(req.body.id, req.body.data)
+        res.send(modifyEntry)
+    }
 })
 
 app.post('/modifyproduct', async (req, res) => {
@@ -112,7 +159,7 @@ app.post('/modifyclient', async (req, res) => {
 
 
 app.post('/deleteorder', async (req, res) => {
-    let deleteEntry = await OrderModel.findByIdAndDelete(req.body.id)
+    let deleteEntry = await Order2020.findByIdAndDelete(req.body.id)
     deleteEntry.delete()
 })
 

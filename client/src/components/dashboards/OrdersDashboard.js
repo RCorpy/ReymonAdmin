@@ -28,13 +28,14 @@ export default function OrdersDashboard({title}) {
 
   const [showMyAsideDiv, setShowMyAsideDiv]=useState(false)
   const [tableValues, setTableValues] = useState([EXAMPLE_ORDER])
-  const [toModifyValues, setToModifyValues] = useState(EXAMPLE_ORDER) 
+  const [toModifyValues, setToModifyValues] = useState(EXAMPLE_ORDER)
+  const [filter, setFilter] = useState({completed: true, search: {type: "orderNumber", value: ""}})
 
   const myAsideDivStyle = showMyAsideDiv ? {display: "inline"} :  {display: "none"}
 
 
   useEffect(()=>{
-    fetch(`${URL}orders`)
+    fetch(`${URL}orders/all`)
     .then(res=>res.json())
     .then(data=>setTableValues(data))
   },[])
@@ -45,7 +46,6 @@ export default function OrdersDashboard({title}) {
       return prev.map((mappedOrder)=>{
         if(mappedOrder._id === order._id){
           let updatedProductList = modifiedOrder.productList.filter(product=> product.name !== "new").filter(product => product.name !=="")
-          console.log(updatedProductList)
           return {...modifiedOrder, productList: updatedProductList}
         }
         else {return mappedOrder}
@@ -76,28 +76,57 @@ export default function OrdersDashboard({title}) {
     })
   } 
 
+  const filterTableValues = () => {
+    let data = tableValues
+    if(filter){
+      if(filter.completed){
+        data = data.filter(order=>(!order.completed))
+      }
+      if(filter.search && filter.search.type){
+        const searchType = filter.search.type
+        switch(searchType){
+          case "date":
+            data = data.filter(order=>(order.deliveryDate.includes(filter.search.value)))
+            break
+          case "name":
+            data = data.filter(order=>(order.name.includes(filter.search.value)))
+            break
+          case "telephone":
+            data = data.filter(order=>(order.telephone.includes(filter.search.value)))
+            break
+          case "orderNumber":
+            data = data.filter(order=>(order.orderNumber.includes(filter.search.value)))
+            break
+          default:
+            break
+        }
+      }
+    }
+
+    return data
+  }
 
   const createTableContent = () =>{
-    return tableValues.map(order=>{
+    return filterTableValues().map(order=>{
         const normalTableClick = ()=>{
-        setShowMyAsideDiv(!showMyAsideDiv)
-        setToModifyValues(order)
-  }
-      return (
-      <tr>
-        <td onClick={normalTableClick}>{order.orderNumber}</td>
-        <td onClick={normalTableClick}>{order.telephone}</td>
-        <td onClick={normalTableClick}>{order.name}</td>
-        <td onClick={normalTableClick}>{order.location}</td>
-        <td onClick={normalTableClick}>{order.category}</td>
-        <td onClick={normalTableClick}>{order.floorType}</td>
-        <td onClick={normalTableClick}>{order.area}</td>
-        <td onClick={normalTableClick}>{order.deliveryDate}</td> 
-        <td onClick={normalTableClick}>{order.discount}</td>
-        <td onClick={normalTableClick}>{getTotal(order)}</td>
-        <td onClick={()=>{modifyOrder(order, {...order, completed: !order.completed})}}>{order.completed ? "true": "false"}</td>
-        <td><div style={{display:"flex", justifyContent:"center"}} onClick={()=>deleteOrder(order)}><i class="fas fa-trash-alt"></i></div></td> {/*changed deleteOrder(order) to setShow*/}
-      </tr>)
+          setShowMyAsideDiv(!showMyAsideDiv)
+          setToModifyValues(order)
+      }
+          return (
+          <tr>
+            <td onClick={normalTableClick}>{order.orderNumber}</td>
+            <td onClick={normalTableClick}>{order.telephone}</td>
+            <td onClick={normalTableClick}>{order.name}</td>
+            <td onClick={normalTableClick}>{order.location}</td>
+            <td onClick={normalTableClick}>{order.category}</td>
+            <td onClick={normalTableClick}>{order.floorType}</td>
+            <td onClick={normalTableClick}>{order.area}</td>
+            <td onClick={normalTableClick}>{order.deliveryDate}</td> 
+            <td onClick={normalTableClick}>{order.discount}</td>
+            <td onClick={normalTableClick}>{getTotal(order)}</td>
+            <td onClick={()=>{modifyOrder(order, {...order, completed: !order.completed})}}>{order.completed ? "true": "false"}</td>
+            <td><div style={{display:"flex", justifyContent:"center"}} onClick={()=>deleteOrder(order)}><i class="fas fa-trash-alt"></i></div></td> {/*changed deleteOrder(order) to setShow*/}
+          </tr>)
     })
   }
 
