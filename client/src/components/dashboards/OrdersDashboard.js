@@ -154,6 +154,11 @@ export default function OrdersDashboard({title}) {
     }
   }
 
+  const changeSearchValue = (e) => {
+    e.persist();
+
+    setFilter((prev) => ({...prev, search: {type: prev.search.type, value: e.target.value}}))
+  }
 
   return (
     <div className="content-wrapper">
@@ -186,20 +191,22 @@ export default function OrdersDashboard({title}) {
                   <Button variant={filter.completed ? "primary" : "secondary"} onClick={()=>setFilter(prev=>({...prev, completed: !prev.completed}))}>{filter.completed ? "Completed Hidden" : "Completed Shown"}</Button>
                 </ButtonGroup>
                 <ButtonGroup aria-label="First group">
-                  <Button variant="secondary">Date</Button>{' '}
-                  <Button variant="secondary">Name</Button>{' '}
-                  <Button variant="secondary">Telephone</Button>{' '}
-                  <Button variant="secondary">Order Nº</Button>
+                  <Button variant={filter.search.type==="date" ? "primary" : "secondary"} onClick={()=>setFilter(prev=>({...prev, search:{...prev.search, type: "date"}}))}>Date</Button>{' '}
+                  <Button variant={filter.search.type==="name" ? "primary" : "secondary"} onClick={()=>setFilter(prev=>({...prev, search:{...prev.search, type: "name"}}))}>Name</Button>{' '}
+                  <Button variant={filter.search.type==="telephone" ? "primary" : "secondary"} onClick={()=>setFilter(prev=>({...prev, search:{...prev.search, type: "telephone"}}))}>Telephone</Button>{' '}
+                  <Button variant={filter.search.type==="orderNumber" ? "primary" : "secondary"} onClick={()=>setFilter(prev=>({...prev, search:{...prev.search, type: "orderNumber"}}))}>Order Nº</Button>
                 </ButtonGroup>
                 <InputGroup>
                   <InputGroup.Prepend>
-                    <InputGroup.Text id="btnGroupAddon2">@</InputGroup.Text>
+                    <InputGroup.Text id="btnGroupAddon2">{filter.search.type==="orderNumber" ? "Order Nº" : filter.search.type.charAt(0).toUpperCase() + filter.search.type.slice(1)}</InputGroup.Text>
                   </InputGroup.Prepend>
                   <FormControl
                     type="text"
                     placeholder="Input group example"
                     aria-label="Input group example"
                     aria-describedby="btnGroupAddon2"
+                    onChange={(e)=>changeSearchValue(e)}
+                    value={filter.search.value}
                   />
                 </InputGroup>
               </ButtonToolbar>
