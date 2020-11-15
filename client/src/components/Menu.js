@@ -19,17 +19,18 @@ export default function Menu() {
         {/* Sidebar Menu */}
         <SideNavBar>
           <Folder text="Dashboard" spanText="hello">
-              <FolderItem to={"/Orders"} text={"first Dash"}/>
-              <FolderItem to={"/Clients"} text={"second Dash"}/>
-              <FolderItem to={"/Products"} text={"third Dash"}/>
+              <FolderItem to={"/Orders"} text={"Orders"}/>
+              <FolderItem to={"/Clients"} text={"Customers"}/>
+              <FolderItem to={"/Products"} text={"Products"}/>
+              <FolderItem to={"/NewOrder"} text="New Order" />
           </ Folder>
           <GroupTitle text="EXAMPLES" />
           <FolderItem to="/Orders" text="Widgets" icon="fas fa-th"/>
 
           <Folder text="Charts">
-              <FolderItem to={"/Charts"} text={"first Dash"}/>
-              <FolderItem to={"/Charts"} text={"second Dash"}/>
-              <FolderItem to={"/Charts"} text={"third Dash"}/>
+              <FolderItem to={"/Charts"} text={"Charts"}/>
+              <FolderItem to={"/Charts"} text={"Charts"}/>
+              <FolderItem to={"/Charts"} text={"Charts"}/>
           </ Folder>
         </ SideNavBar>
         {/* /.sidebar-menu */}
