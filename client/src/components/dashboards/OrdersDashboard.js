@@ -1,8 +1,10 @@
 import React, {useState, useEffect} from "react";
 import Card from "../contentComponents/Card"
-import {Table} from "react-bootstrap"
+import {ButtonGroup, Table} from "react-bootstrap"
 import {fetchModifyOrder, fetchDeleteOrder} from '../functions/fetchFunctions'
 import Validator from '../functions/validators'
+import {Button, InputGroup, ButtonToolbar, FormControl} from 'react-bootstrap';
+
 
 const URL = process.env.URL || 'http://localhost:3000/'
 const validate = new Validator()
@@ -84,18 +86,19 @@ export default function OrdersDashboard({title}) {
       }
       if(filter.search && filter.search.type){
         const searchType = filter.search.type
+        const searchValue = filter.search.value
         switch(searchType){
           case "date":
-            data = data.filter(order=>(order.deliveryDate.includes(filter.search.value)))
+            data = data.filter(order=>(order.deliveryDate.includes(searchValue)))
             break
           case "name":
-            data = data.filter(order=>(order.name.includes(filter.search.value)))
+            data = data.filter(order=>(order.name.includes(searchValue)))
             break
           case "telephone":
-            data = data.filter(order=>(order.telephone.includes(filter.search.value)))
+            data = data.filter(order=>(order.telephone.includes(searchValue)))
             break
           case "orderNumber":
-            data = data.filter(order=>(order.orderNumber.includes(filter.search.value)))
+            data = data.filter(order=>(order.orderNumber.includes(searchValue)))
             break
           default:
             break
@@ -172,7 +175,36 @@ export default function OrdersDashboard({title}) {
         <div className="container-fluid">
           <div className="row">
             <div className="col-lg-12">
-              <Card title="Big card">
+              <Card title="Orders">
+
+              {/* Filter options*/}
+              <ButtonToolbar
+                className="justify-content-between"
+                aria-label="Toolbar with Button groups"
+              >
+                <ButtonGroup aria-label="First group">
+                  <Button variant={filter.completed ? "primary" : "secondary"} onClick={()=>setFilter(prev=>({...prev, completed: !prev.completed}))}>{filter.completed ? "Completed Hidden" : "Completed Shown"}</Button>
+                </ButtonGroup>
+                <ButtonGroup aria-label="First group">
+                  <Button variant="secondary">Date</Button>{' '}
+                  <Button variant="secondary">Name</Button>{' '}
+                  <Button variant="secondary">Telephone</Button>{' '}
+                  <Button variant="secondary">Order Nº</Button>
+                </ButtonGroup>
+                <InputGroup>
+                  <InputGroup.Prepend>
+                    <InputGroup.Text id="btnGroupAddon2">@</InputGroup.Text>
+                  </InputGroup.Prepend>
+                  <FormControl
+                    type="text"
+                    placeholder="Input group example"
+                    aria-label="Input group example"
+                    aria-describedby="btnGroupAddon2"
+                  />
+                </InputGroup>
+              </ButtonToolbar>
+              {/* / Filter options*/}
+
                 <div class="position-relative mb-4">
                   <Table bordered hover>
                   <thead>
