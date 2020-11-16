@@ -250,41 +250,41 @@ export default function OrdersDashboard({title}) {
         <div className="zindex1500">
           <h4>Modifying {toModifyValues._id}</h4>
           <form className="asideform" onSubmit={handleAsideSubmit}>
-          <div className="form-group">
+          <div className="form-group dashboardformgroup">
             <label>Order Number</label>
             <input type="text" onChange={(e)=>setToModifyValues({...toModifyValues ,orderNumber:e.target.value})} value={toModifyValues.orderNumber}/>
              {/*<small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>*/}
           </div>
-          <div className="form-group">
+          <div className="form-group dashboardformgroup">
             <label>Telephone</label>
             <input type="text" onChange={(e)=>setToModifyValues({...toModifyValues ,telephone:e.target.value})} value={toModifyValues.telephone}/>
           </div>
-          <div className="form-group">
+          <div className="form-group dashboardformgroup">
             <label>Name</label>
             <input type="text" onChange={(e)=>setToModifyValues({...toModifyValues ,name:e.target.value})} value={toModifyValues.name}/>
           </div>
-          <div className="form-group">
+          <div className="form-group dashboardformgroup">
             <label>Location</label>
             <input type="text" onChange={(e)=>setToModifyValues({...toModifyValues ,location:e.target.value})} value={toModifyValues.location}/>
           </div>
-          <div className="form-group">
+          <div className="form-group dashboardformgroup">
             <label>Category</label>
             <input type="text" onChange={(e)=>setToModifyValues({...toModifyValues ,category:e.target.value})} value={toModifyValues.category} />
           </div>
-          <div className="form-group">
+          <div className="form-group dashboardformgroup">
             <label>Floor Type</label>
             <input type="text" onChange={(e)=>setToModifyValues({...toModifyValues ,floorType:e.target.value})} value={toModifyValues.floorType}/>
           </div>
 
-          <div className="form-group">
+          <div className="form-group dashboardformgroup">
             <label>Delivery Date</label>
             <input type="text" onChange={(e)=>setToModifyValues({...toModifyValues ,deliveryDate:e.target.value})} value={toModifyValues.deliveryDate} />
           </div>
-          <div className="form-group">
+          <div className="form-group dashboardformgroup">
             <label>Area</label>
             <input type="number" onChange={(e)=>setToModifyValues({...toModifyValues ,area:e.target.value})} value={toModifyValues.area} />
           </div>
-          <div className="form-group">
+          <div className="form-group dashboardformgroup">
             <label>Product List</label>
             <button type="button" onClick={makeNewProduct} style={{margin: "0px"}}>Add product</button>
           </div>
@@ -311,15 +311,15 @@ export default function OrdersDashboard({title}) {
 
 
             {/*END OF PRODUCT LIST*/}
-          <div className="form-group" style={{marginTop: "10px"}}>
+          <div className="form-group dashboardformgroup" style={{marginTop: "10px"}}>
             <label>Discount</label>
             <input type="number" onChange={(e)=>setToModifyValues({...toModifyValues ,discount:e.target.value})} value={toModifyValues.discount} />
           </div>
-          <div className="form-group" style={{marginTop: "10px"}}>
+          <div className="form-group dashboardformgroup" style={{marginTop: "10px"}}>
             <label>Total</label>
             <input type="number" value={getTotal(toModifyValues)} />
           </div>
-          <div className="form-group">
+          <div className="form-group dashboardformgroup">
             <button className="btn btn-primary" type="submit">Save</button>
             <button className="btn btn-secondary" type="button" onClick={()=>setShowMyAsideDiv(false)}>Close</button>
           </div>
