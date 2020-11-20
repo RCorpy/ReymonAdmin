@@ -15,8 +15,11 @@ code {
 .myasidediv {
   position: absolute;
   right: 0;
-  bottom: -57px;
+  padding-top:114px;
+  top: -57px;
+  height: 100%;
   width: 25%;
+  overflow-y: auto;
   border: solid black 1px;
   background-color: white;
   transition: right .3s ease-in-out;

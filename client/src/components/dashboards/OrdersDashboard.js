@@ -10,17 +10,29 @@ const URL = process.env.URL || 'http://localhost:3000/'
 const validate = new Validator()
 
 const EXAMPLE_ORDER = {
-  _id: "qqewqyuweoq",       
-  name: "Demo Customer",
-  location: "Valencia",
-  category: "HS100",
-  floorType: "hormigon",
-  productList: [{name: "HS100", amount: "2", price: 27, kit: "20Kgs"}, {name: "Disolvente", amount: "1", price: 3, kit: "1L"}],
-  deliveryDate: "2020-10-21",
-  area: 200,
+  _id: "qqewqyuweoq",
   orderNumber: "01118601NN",
-  telephone:"456798",
-  discount: 1,
+  customer:{
+    telephone:"456798",
+    name: "Demo Customer",
+    postalCode: "46005",
+    address: "C/something",
+    city: "Valencia",
+    province: "Valencia",
+    country: "Spain",
+    contact: "Mr. Demo",
+    CIF: "03921841L",
+    email: "asdasd@fasd.com",
+  },
+  description: "",
+  status: "proforma",
+  extraNotes: "",
+  category: "Naves",
+  productList: [{name: "HS100", color:"white", amount: "2", price: 27, kit: "20Kgs"}, {name: "Disolvente", color:"none", amount: "1", price: 3, kit: "1L"}],
+  orderDate: "2020-10-21",
+  area: 200,
+  resinType: "Acrilica",
+  discount: 50,
   completed: false
 }
 
@@ -86,19 +98,19 @@ export default function OrdersDashboard({title}) {
       }
       if(filter.search && filter.search.type){
         const searchType = filter.search.type
-        const searchValue = filter.search.value
+        const searchValue = filter.search.value.toLowerCase()
         switch(searchType){
           case "date":
-            data = data.filter(order=>(order.deliveryDate.includes(searchValue)))
+            data = data.filter(order=>(order.orderDate.includes(searchValue)))
             break
           case "name":
-            data = data.filter(order=>(order.name.includes(searchValue)))
+            data = data.filter(order=>(order.customer.name.toLowerCase().includes(searchValue)))
             break
           case "telephone":
-            data = data.filter(order=>(order.telephone.includes(searchValue)))
+            data = data.filter(order=>(order.customer.telephone.includes(searchValue)))
             break
           case "orderNumber":
-            data = data.filter(order=>(order.orderNumber.includes(searchValue)))
+            data = data.filter(order=>(order.orderNumber.toLowerCase().includes(searchValue)))
             break
           default:
             break
@@ -118,15 +130,13 @@ export default function OrdersDashboard({title}) {
           return (
           <tr>
             <td onClick={normalTableClick}>{order.orderNumber}</td>
-            <td onClick={normalTableClick}>{order.telephone}</td>
-            <td onClick={normalTableClick}>{order.name}</td>
-            <td onClick={normalTableClick}>{order.location}</td>
-            <td onClick={normalTableClick}>{order.category}</td>
-            <td onClick={normalTableClick}>{order.floorType}</td>
-            <td onClick={normalTableClick}>{order.area}</td>
-            <td onClick={normalTableClick}>{order.deliveryDate}</td> 
-            <td onClick={normalTableClick}>{order.discount}</td>
+            <td onClick={normalTableClick}>{order.customer.telephone}</td>
+            <td onClick={normalTableClick}>{order.customer.name}</td>
+            <td onClick={normalTableClick}>{order.customer.city}</td>
+            <td onClick={normalTableClick}>{order.orderDate}</td> 
+            <td onClick={normalTableClick}>{order.discount}%</td>
             <td onClick={normalTableClick}>{getTotal(order)}</td>
+            <td onClick={normalTableClick}>{order.extraNotes ? "yes" : "no"}</td>
             <td onClick={()=>{modifyOrder(order, {...order, completed: !order.completed})}}>{order.completed ? "true": "false"}</td>
             <td><div style={{display:"flex", justifyContent:"center"}} onClick={()=>deleteOrder(order)}><i class="fas fa-trash-alt"></i></div></td> {/*changed deleteOrder(order) to setShow*/}
           </tr>)
@@ -136,14 +146,13 @@ export default function OrdersDashboard({title}) {
 
   const handleAsideSubmit = (e) => {
     e.preventDefault()
+
+    // NEED TO ADD MORE VALIDATIONS
+
     if(true ||
-      validate.number(toModifyValues.price) && 
       validate.number(toModifyValues.discount) && 
-      validate.notEmpty(toModifyValues.name) && 
-      validate.notEmpty(toModifyValues.category) && 
-      validate.notEmpty(toModifyValues.location) && 
-      validate.notEmpty(toModifyValues.productList) && 
-      validate.date(toModifyValues.deliveryDate)
+      validate.notEmpty(toModifyValues.customer.name) && 
+      validate.date(toModifyValues.orderDate)
       )
       {
       modifyOrder(toModifyValues, toModifyValues)
@@ -197,7 +206,7 @@ export default function OrdersDashboard({title}) {
                   <Button variant={filter.search.type==="orderNumber" ? "primary" : "secondary"} onClick={()=>setFilter(prev=>({...prev, search:{...prev.search, type: "orderNumber"}}))}>Order Nº</Button>
                 </ButtonGroup>
                 <InputGroup>
-                  <InputGroup.Prepend>
+                  <InputGroup.Prepend> {/* MAKE THIS FIXED SIZE SO IT DOESNT WOBBLE */}
                     <InputGroup.Text id="btnGroupAddon2">{filter.search.type==="orderNumber" ? "Order Nº" : filter.search.type.charAt(0).toUpperCase() + filter.search.type.slice(1)}</InputGroup.Text>
                   </InputGroup.Prepend>
                   <FormControl
@@ -205,7 +214,7 @@ export default function OrdersDashboard({title}) {
                     placeholder="Input group example"
                     aria-label="Input group example"
                     aria-describedby="btnGroupAddon2"
-                    onChange={(e)=>changeSearchValue(e)}
+                    onChange={(e)=>changeSearchValue(e)}  
                     value={filter.search.value}
                   />
                 </InputGroup>
@@ -218,16 +227,14 @@ export default function OrdersDashboard({title}) {
                     <tr>
                       <th>Order Number</th>
                       <th>Telephone</th>
-                      <th>name</th>
-                      <th>location</th>
-                      <th>category</th>
-                      <th>floor</th>
-                      <th>area</th>
-                      <th>deliveryDate</th>
-                      <th>discount</th>
-                      <th>total</th>
-                      <th>completed</th>
-                      <th>delete</th>
+                      <th>Name</th>
+                      <th>City</th>
+                      <th>Date</th>
+                      <th>Discount</th>
+                      <th>Total</th>
+                      <th>Notes</th>
+                      <th>Completed</th>
+                      <th>Delete</th>
 
                     </tr>
                   </thead>
@@ -245,6 +252,8 @@ export default function OrdersDashboard({title}) {
         
         {/* /.container-fluid */}
 
+
+
       </div>
       <div className="wrapper myasidediv col-lg-6" style={myAsideDivStyle}>
         <div className="zindex1500">
@@ -257,28 +266,72 @@ export default function OrdersDashboard({title}) {
           </div>
           <div className="form-group dashboardformgroup">
             <label>Telephone</label>
-            <input type="text" onChange={(e)=>setToModifyValues({...toModifyValues ,telephone:e.target.value})} value={toModifyValues.telephone}/>
+            <input type="text" onChange={(e)=>setToModifyValues({...toModifyValues ,customer: {...toModifyValues.customer ,telephone:e.target.value}})} value={toModifyValues.customer.telephone}/>
           </div>
           <div className="form-group dashboardformgroup">
             <label>Name</label>
-            <input type="text" onChange={(e)=>setToModifyValues({...toModifyValues ,name:e.target.value})} value={toModifyValues.name}/>
+            <input type="text" onChange={(e)=>setToModifyValues({...toModifyValues ,customer: {...toModifyValues.customer ,name:e.target.value}})} value={toModifyValues.customer.name}/>
           </div>
           <div className="form-group dashboardformgroup">
-            <label>Location</label>
-            <input type="text" onChange={(e)=>setToModifyValues({...toModifyValues ,location:e.target.value})} value={toModifyValues.location}/>
+            <label>Postal Code</label>
+            <input type="text" onChange={(e)=>setToModifyValues({...toModifyValues ,customer: {...toModifyValues.customer ,postalCode:e.target.value}})} value={toModifyValues.customer.postalCode}/>
+          </div>
+          <div className="form-group dashboardformgroup">
+            <label>Address</label>
+            <input type="text" onChange={(e)=>setToModifyValues({...toModifyValues ,customer: {...toModifyValues.customer ,address:e.target.value}})} value={toModifyValues.customer.address}/>
+          </div>
+          <div className="form-group dashboardformgroup">
+            <label>City</label>
+            <input type="text" onChange={(e)=>setToModifyValues({...toModifyValues ,customer: {...toModifyValues.customer ,city:e.target.value}})} value={toModifyValues.customer.city}/>
+          </div>
+          <div className="form-group dashboardformgroup">
+            <label>Province</label>
+            <input type="text" onChange={(e)=>setToModifyValues({...toModifyValues ,customer: {...toModifyValues.customer ,province:e.target.value}})} value={toModifyValues.customer.province}/>
+          </div>
+          <div className="form-group dashboardformgroup">
+            <label>Country</label>
+            <input type="text" onChange={(e)=>setToModifyValues({...toModifyValues ,customer: {...toModifyValues.customer ,country:e.target.value}})} value={toModifyValues.customer.country}/>
+          </div>
+          <div className="form-group dashboardformgroup">
+            <label>Contact</label>
+            <input type="text" onChange={(e)=>setToModifyValues({...toModifyValues ,customer: {...toModifyValues.customer ,contact:e.target.value}})} value={toModifyValues.customer.contact}/>
+          </div>
+          <div className="form-group dashboardformgroup">
+            <label>CIF</label>
+            <input type="text" onChange={(e)=>setToModifyValues({...toModifyValues ,customer: {...toModifyValues.customer ,CIF:e.target.value}})} value={toModifyValues.customer.CIF}/>
+          </div>
+          <div className="form-group dashboardformgroup">
+            <label>Email</label>
+            <input type="text" onChange={(e)=>setToModifyValues({...toModifyValues ,customer: {...toModifyValues.customer ,email:e.target.value}})} value={toModifyValues.customer.email}/>
+          </div>
+
+
+          {/* UP IS CUSTOMER, DOWN IS GENERAL*/}
+
+
+          <div className="form-group dashboardformgroup">
+            <label>Description</label>
+            <input type="text" onChange={(e)=>setToModifyValues({...toModifyValues ,description:e.target.value})} value={toModifyValues.description} />
+          </div>
+          <div className="form-group dashboardformgroup">
+            <label>Status</label>
+            <input type="text" onChange={(e)=>setToModifyValues({...toModifyValues ,status:e.target.value})} value={toModifyValues.status} />
+          </div>
+          <div className="form-group dashboardformgroup">
+            <label>Extra Notes</label>
+            <input type="text" onChange={(e)=>setToModifyValues({...toModifyValues ,extraNotes:e.target.value})} value={toModifyValues.extraNotes} />
           </div>
           <div className="form-group dashboardformgroup">
             <label>Category</label>
             <input type="text" onChange={(e)=>setToModifyValues({...toModifyValues ,category:e.target.value})} value={toModifyValues.category} />
           </div>
           <div className="form-group dashboardformgroup">
-            <label>Floor Type</label>
-            <input type="text" onChange={(e)=>setToModifyValues({...toModifyValues ,floorType:e.target.value})} value={toModifyValues.floorType}/>
+            <label>Resin</label>
+            <input type="text" onChange={(e)=>setToModifyValues({...toModifyValues ,resinType:e.target.value})} value={toModifyValues.resinType} />
           </div>
-
           <div className="form-group dashboardformgroup">
-            <label>Delivery Date</label>
-            <input type="text" onChange={(e)=>setToModifyValues({...toModifyValues ,deliveryDate:e.target.value})} value={toModifyValues.deliveryDate} />
+            <label>Date</label>
+            <input type="text" onChange={(e)=>setToModifyValues({...toModifyValues ,orderDate:e.target.value})} value={toModifyValues.orderDate} />
           </div>
           <div className="form-group dashboardformgroup">
             <label>Area</label>
@@ -292,19 +345,21 @@ export default function OrdersDashboard({title}) {
             <Table bordered hover>
                     <thead>
                       <tr>
-                        <th>name</th>
-                        <th>amount</th>
-                        <th>price</th>
-                        <th>kit</th>
+                        <th>Name</th>
+                        <th>Color</th>
+                        <th>Amount</th>
+                        <th>Price</th>
+                        <th>Kit</th>
                       </tr>
                     </thead>
                     <tbody>
                       {toModifyValues.productList.map((product, index)=>(
                         <tr>
-                          <td><input type="text" onChange={(e)=>setToModifyValues({...toModifyValues ,productList: getNewProductList(index, e.target.value, product.price, product.amount, product.kit)})} value={product.name} /></td>
-                          <td><input type="text" onChange={(e)=>setToModifyValues({...toModifyValues ,productList: getNewProductList(index, product.name, product.price, e.target.value, product.kit)})} value={product.amount} /></td>
-                          <td><input type="text" onChange={(e)=>setToModifyValues({...toModifyValues ,productList: getNewProductList(index, product.name, e.target.value, product.amount, product.kit)})} value={product.price} /></td>
-                          <td><input type="text" onChange={(e)=>setToModifyValues({...toModifyValues ,productList: getNewProductList(index, product.name, product.price, product.amount, e.target.value)})} value={product.kit} /></td>
+                          <td><input type="text" onChange={(e)=>setToModifyValues({...toModifyValues ,productList: getNewProductList(index, e.target.value, product.color, product.price, product.amount, product.kit)})} value={product.name} /></td>
+                          <td><input type="text" onChange={(e)=>setToModifyValues({...toModifyValues ,productList: getNewProductList(index, product.name, e.target.value ,product.price, product.amount, product.kit)})} value={product.color}/></td>
+                          <td><input type="text" onChange={(e)=>setToModifyValues({...toModifyValues ,productList: getNewProductList(index, product.name, product.color, product.price, e.target.value, product.kit)})} value={product.amount} /></td>
+                          <td><input type="text" onChange={(e)=>setToModifyValues({...toModifyValues ,productList: getNewProductList(index, product.name, product.color, e.target.value, product.amount, product.kit)})} value={product.price} /></td>
+                          <td><input type="text" onChange={(e)=>setToModifyValues({...toModifyValues ,productList: getNewProductList(index, product.name, product.color, product.price, product.amount, e.target.value)})} value={product.kit} /></td>
                         </tr>))}
                     </tbody>
             </Table>
