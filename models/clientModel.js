@@ -6,14 +6,35 @@ const Schema = new mongoose.Schema({
         type: String,
         required: true
     },
-    discount:{
-        type:Number,
+    postalCode:{
+        type: String
     },
-    lastProductName:{
+    address:{
+        type: String
+    },
+    city:{
+        type: String
+    },
+    province:{
+        type: String
+    },
+    country:{
+        type: String
+    },
+    contact:{
         type: String,
-    }
+    },
+    CIF:{
+        type: String
+    },
+    email:{
+        type: String
+    },
+
+
 })
 
 const Model = mongoose.model('Client', Schema)
 
 module.exports= Model
+

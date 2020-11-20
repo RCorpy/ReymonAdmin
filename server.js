@@ -51,19 +51,31 @@ mongoose.connect(uri, { useNewUrlParser: true , useUnifiedTopology: true })
 mongoose.connection.on('connected', async () =>{
     console.log("connected!")
 
-    let order={      
-        name: "Demo Customer",
-        location: "Valencia",
-        category: "HS100",
-        floorType: "hormigon",
-        productList: [{name: "HS100", amount: "2", price: 27, kit: "20Kgs"}, {name: "Disolvente", amount: "1", price: 3, kit: "1L"}],
-        deliveryDate: "2021-10-21",
-        area: 200,
+    let order={
         orderNumber: "01118601NN",
-        telephone:"456798",
-        discount: 1,
+        customer:{
+          telephone:"456798",
+          name: "Demo NEW",
+          postalCode: "46005",
+          address: "C/something",
+          city: "Valencia",
+          province: "Valencia",
+          country: "Spain",
+          contact: "Mr. Demo",
+          CIF: "03921841L",
+          email: "asdasd@fasd.com",
+        },
+        description: "",
+        status: "proforma",
+        extraNotes: "",
+        category: "Naves",
+        productList: [{name: "HS100", color:"white", amount: "2", price: 27, kit: "20Kgs"}, {name: "Disolvente", color:"none", amount: "1", price: 3, kit: "1L"}],
+        orderDate: "2020-10-21",
+        area: 200,
+        resinType: "Acrilica",
+        discount: 50,
         completed: false
-    }
+      }
 
     let product={
         name: "product4",
@@ -71,8 +83,17 @@ mongoose.connection.on('connected', async () =>{
     }
 
     let client={
-        name: "Randy Marsh",
-    }
+        telephone:"456798",
+        name: "Demo CLIENT",
+        postalCode: "46005",
+        address: "C/something",
+        city: "Valencia",
+        province: "Valencia",
+        country: "Spain",
+        contact: "Mr. Demo",
+        CIF: "03921841L",
+        email: "asdasd@fasd.com",
+      }
 
     let newOrder = await new Order2021(order)
     //newOrder.save()
@@ -130,7 +151,8 @@ app.post('/newclient', async (req, res) => {
 //modify, hay que buscar como se hace
 
 app.post('/modifyorder', async (req, res) => {
-    let year = req.body.data.deliveryDate.split("-")[0]
+    console.log(req.body.data)
+    let year = req.body.data.orderDate.split("-")[0]
     console.log(year)
 
     if(year === "2019"){

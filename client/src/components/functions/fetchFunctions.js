@@ -1,8 +1,11 @@
 //orders
 
+const { ModalFooter } = require("react-bootstrap")
+
 const modifyOrder = (order, modifiedOrder) => {
 
     let url = 'http://localhost:3000/modifyorder'
+
 
     fetch(url, {
       method:"POST",
@@ -10,16 +13,17 @@ const modifyOrder = (order, modifiedOrder) => {
       body: JSON.stringify(
         {
           id: order._id,
-          data: {    
-            name: modifiedOrder.name,
-            location: modifiedOrder.location,
-            category: modifiedOrder.category,
-            floorType: modifiedOrder.floorType,
-            productList: modifiedOrder.productList,
-            deliveryDate: modifiedOrder.deliveryDate,
-            area: modifiedOrder.area,
+          data: {
             orderNumber: modifiedOrder.orderNumber,
-            telephone: modifiedOrder.telephone,
+            customer: modifiedOrder.customer,
+            description:modifiedOrder.description,
+            status: modifiedOrder.status,
+            extraNotes: modifiedOrder.extraNotes,
+            category: modifiedOrder.category,
+            productList: modifiedOrder.productList,
+            orderDate: modifiedOrder.orderDate,
+            area: modifiedOrder.area,
+            resinType: modifiedOrder.resinType,
             discount: modifiedOrder.discount,
             completed: modifiedOrder.completed
           }
