@@ -13,7 +13,7 @@ function App() {
   return (
     <div className="App">
       <BrowserRouter>
-      <div class="wrapper">
+      <div className="wrapper">
         <Header />
         <Menu />
         <Switch>
