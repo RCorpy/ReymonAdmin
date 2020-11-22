@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Card from "../contentComponents/Card";
 import { InputGroup, FormControl } from "react-bootstrap";
 import FormInput from "../contentComponents/formInput";
+import NewOrderRow from "./newOrderRow";
 import {
   fetchModifyProduct,
   fetchDeleteProduct,
@@ -38,6 +39,26 @@ export default function ProductsDashboard({ title }) {
     discount: 50,
     completed: false,
   });
+
+  const [productList, setProductList] = useState({
+    imprimacion: { name: "a", color: "a", amount: "1", price: 1, kit: "a" },
+    disolvente: { name: "a", color: "a", amount: "1", price: 1, kit: "a" },
+    layers: [
+      { name: "c", color: "c", amount: "3", price: 2, kit: "c" },
+      { name: "c", color: "c", amount: "3", price: 2, kit: "c" },
+    ],
+    noCharge: { name: "o", color: "o", amount: "2", price: 1, kit: "o" },
+    threeD: { name: "o", color: "o", amount: "2", price: 1, kit: "o" },
+  });
+
+  const modifyProductList = (objectKey, value) => {
+    console.log(value)
+    setProductList((prev) => {
+      let toReturn = { ...prev };
+      toReturn[objectKey] = value
+      return toReturn
+    });
+  };
 
   const searchCustomer = () => {
     console.log("SEARCHING");
@@ -216,7 +237,6 @@ export default function ProductsDashboard({ title }) {
                             toModify="discount"
                             setTableValuesFunction={setTableValues}
                           />
-                          
                         </div>
                         <div className="col-md-6">
                           <FormInput
@@ -245,6 +265,7 @@ export default function ProductsDashboard({ title }) {
                               className="form-control select2"
                               style={{ width: "100%" }}
                               value={tableValues.resinType}
+                              onChange={(e)=>{e.persist();setTableValues((prev)=>({...prev, resinType: e.target.value}))}}
                             >
                               <option value="Epoxi">Epoxi</option>
                               <option value="Epoxi W">Epoxi W</option>
@@ -255,16 +276,67 @@ export default function ProductsDashboard({ title }) {
                         </div>
                       </div>
                     </div>
+                    <div className="card-body">
+                      <div className="row">
+                        <div className="col-md-2">Name</div>
+                        <div className="col-md-2">Color</div>{" "}
+                        <div className="col-md-2">Amount</div>{" "}
+                        <div className="col-md-2">Price</div>
+                        <div className="col-md-2">Kit</div>
+                        <div className="col-md-2">Total</div>
+                      </div>
+                      <div className="row">
+                        <div className="col-md-12">
+                          <span>Imprimación</span>
+                        </div>
+                        <NewOrderRow
+                          items={productList.imprimacion}
+                          changeFunction={(v)=>{modifyProductList("imprimacion", v)}}
+                        />
+                      </div>
+                      <div className="row">
+                        <div className="col-md-12">
+                          <span>Capas</span>
+                        </div>
+                        <NewOrderRow
+                          items={productList.layers}
+                          changeFunction={(v)=>{modifyProductList("layers", v)}}
+                        />
+                      </div>
+                      <div className="row">
+                        <div className="col-md-12">
+                          <span>Disolvente</span>
+                        </div>
+                        <NewOrderRow
+                          items={productList.disolvente}
+                          changeFunction={(v)=>{modifyProductList("disolvente", v)}}
+                        />
+
+                      </div>
+                      <div className="row">
+                        <div className="col-md-12">
+                          <span>Sin Cargo</span>
+                        </div>
+                        <NewOrderRow
+                          items={productList.noCharge}
+                          changeFunction={(v)=>{modifyProductList("noCharge", v)}}
+                        />
+                      </div>
+                      <div className="row">
+                        <div className="col-md-12">
+                          <span>3D</span>
+                        </div>
+                        <NewOrderRow
+                          items={productList.threeD}
+                          changeFunction={(v)=>{modifyProductList("threeD", v)}}
+                        />
+                      </div>
+                    </div>
                   </div>
-                </div>
-                <div className="position-relative mb-4">
-                  <div className="card card-default"></div>
                 </div>
               </Card>
             </div>
           </div>
-          
-
         </div>
         {/* /.container-fluid */}
       </div>
