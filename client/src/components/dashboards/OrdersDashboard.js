@@ -9,6 +9,8 @@ import {Button, InputGroup, ButtonToolbar, FormControl} from 'react-bootstrap';
 const URL = process.env.URL || 'http://localhost:3000/'
 const validate = new Validator()
 
+const productArray = ["imprimacion", "disolvente", "layers", "noCharge", "threeD"]
+
 const EXAMPLE_ORDER = {
   _id: "qqewqyuweoq",
   orderNumber: "01118601NN",
@@ -28,7 +30,16 @@ const EXAMPLE_ORDER = {
   status: "proforma",
   extraNotes: "",
   category: "Naves",
-  productList: [{name: "HS100", color:"white", amount: "2", price: 27, kit: "20Kgs"}, {name: "Disolvente", color:"none", amount: "1", price: 3, kit: "1L"}],
+  productList:{
+    imprimacion: { name: "a", color: "a", amount: "1", price: 1, kit: "a", juntas: true },
+    disolvente: { name: "b", color: "a", amount: "1", price: 1, kit: "a" },
+    layers: [
+      { name: "c", color: "c", amount: "3", price: 2, kit: "c" },
+      { name: "c", color: "c", amount: "3", price: 2, kit: "c" },
+    ],
+    noCharge: { name: "d", color: "o", amount: "2", price: 1, kit: "o" },
+    threeD: { name: "e", color: "o", amount: "2", price: 1, kit: "o" },
+  },
   orderDate: "2020-10-21",
   area: 200,
   resinType: "Acrilica",
@@ -59,8 +70,7 @@ export default function OrdersDashboard({title}) {
     setTableValues((prev)=>{
       return prev.map((mappedOrder)=>{
         if(mappedOrder._id === order._id){
-          let updatedProductList = modifiedOrder.productList.filter(product=> product.name !== "new").filter(product => product.name !=="")
-          return {...modifiedOrder, productList: updatedProductList}
+          return {...modifiedOrder}
         }
         else {return mappedOrder}
       })
@@ -68,19 +78,11 @@ export default function OrdersDashboard({title}) {
   } 
 
   const getTotal = (order)=> {
-    return order.productList.reduce((accumulator, product)=>accumulator+(product.price*product.amount) , 0)
-  }
-
-  const getNewProductList = (index, name, price, amount, kit) => {
-    let previousProductList = toModifyValues.productList
-    previousProductList[index]={name: name, price: price, amount: amount}
-    console.log(previousProductList)
-    return previousProductList
+    return productArray.reduce((accumulator, product)=>accumulator+(order.productList[product].price*order.productList[product].amount) , 0)
   }
 
   const makeNewProduct = () => {
-    setToModifyValues(prev=>({...prev, productList: [...prev.productList, {name: "new", price: 0, amount: 0, kit: 0}]}))
-
+    setToModifyValues(prev=>({...prev, productList: {...prev.productList, layers: [...prev.productList.layers, { name: "yeah baby", color: "c", amount: "3", price: 2, kit: "c" }] }}))
   }
 
   const deleteOrder = (order) => {
@@ -161,6 +163,19 @@ export default function OrdersDashboard({title}) {
     else{
       console.log("error")
     }
+  }
+
+  const getMyNewProductList = (product, value, key) => {
+    let previousProductArray = toModifyValues.productList
+    previousProductArray[product][key] = value
+    
+    return previousProductArray
+  }
+
+  const getMyNewProductListLayers = ( index, value, key) => {
+    let previousProductListLayerArray = toModifyValues.productList
+    previousProductListLayerArray.layers[index][key] = value
+    return previousProductListLayerArray
   }
 
   const changeSearchValue = (e) => {
@@ -353,14 +368,32 @@ export default function OrdersDashboard({title}) {
                       </tr>
                     </thead>
                     <tbody>
-                      {toModifyValues.productList.map((product, index)=>(
-                        <tr>
-                          <td><input type="text" onChange={(e)=>setToModifyValues({...toModifyValues ,productList: getNewProductList(index, e.target.value, product.color, product.price, product.amount, product.kit)})} value={product.name} /></td>
-                          <td><input type="text" onChange={(e)=>setToModifyValues({...toModifyValues ,productList: getNewProductList(index, product.name, e.target.value ,product.price, product.amount, product.kit)})} value={product.color}/></td>
-                          <td><input type="text" onChange={(e)=>setToModifyValues({...toModifyValues ,productList: getNewProductList(index, product.name, product.color, product.price, e.target.value, product.kit)})} value={product.amount} /></td>
-                          <td><input type="text" onChange={(e)=>setToModifyValues({...toModifyValues ,productList: getNewProductList(index, product.name, product.color, e.target.value, product.amount, product.kit)})} value={product.price} /></td>
-                          <td><input type="text" onChange={(e)=>setToModifyValues({...toModifyValues ,productList: getNewProductList(index, product.name, product.color, product.price, product.amount, e.target.value)})} value={product.kit} /></td>
-                        </tr>))}
+                      {/* SI ES "LAYERS" es un array y hay que hacerle otro map */}
+                      {productArray.map((product)=>{
+                        if (product !== "layers"){ return (
+                          <tr>
+                            <td><input type="text" onChange={(e)=>setToModifyValues({...toModifyValues ,productList: getMyNewProductList(product, e.target.value, "name")})} value={toModifyValues.productList[product].name} /></td>
+                            <td><input type="text" onChange={(e)=>setToModifyValues({...toModifyValues ,productList: getMyNewProductList(product, e.target.value, "color")})} value={toModifyValues.productList[product].color}/></td>
+                            <td><input type="text" onChange={(e)=>setToModifyValues({...toModifyValues ,productList: getMyNewProductList(product, e.target.value, "amount")})} value={toModifyValues.productList[product].amount} /></td>
+                            <td><input type="text" onChange={(e)=>setToModifyValues({...toModifyValues ,productList: getMyNewProductList(product, e.target.value, "price")})} value={toModifyValues.productList[product].price} /></td>
+                            <td><input type="text" onChange={(e)=>setToModifyValues({...toModifyValues ,productList: getMyNewProductList(product, e.target.value, "kit")})} value={toModifyValues.productList[product].kit} /></td>
+                          </tr>)}
+                        else{
+                          return(
+                            <>
+                              {toModifyValues.productList.layers.map((layer, index)=>(
+                              <tr>
+                                <td><input type="text" onChange={(e)=>setToModifyValues({...toModifyValues ,productList: getMyNewProductListLayers(index, e.target.value, "name")})} value={toModifyValues.productList.layers[index].name} /></td>
+                                <td><input type="text" onChange={(e)=>setToModifyValues({...toModifyValues ,productList: getMyNewProductListLayers(index, e.target.value, "color")})} value={toModifyValues.productList.layers[index].color}/></td>
+                                <td><input type="text" onChange={(e)=>setToModifyValues({...toModifyValues ,productList: getMyNewProductListLayers(index, e.target.value, "amount")})} value={toModifyValues.productList.layers[index].amount} /></td>
+                                <td><input type="text" onChange={(e)=>setToModifyValues({...toModifyValues ,productList: getMyNewProductListLayers(index, e.target.value, "price")})} value={toModifyValues.productList.layers[index].price} /></td>
+                                <td><input type="text" onChange={(e)=>setToModifyValues({...toModifyValues ,productList: getMyNewProductListLayers(index, e.target.value, "kit")})} value={toModifyValues.productList.layers[index].kit} /></td>
+                              </tr>
+                              ))}
+                            </>
+                          )
+                        }
+                        })}
                     </tbody>
             </Table>
 

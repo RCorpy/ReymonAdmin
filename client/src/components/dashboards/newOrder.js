@@ -29,10 +29,16 @@ export default function ProductsDashboard({ title }) {
     status: "proforma",
     extraNotes: "",
     category: "Naves",
-    productList: [
-      { name: "HS100", color: "white", amount: "2", price: 27, kit: "20Kgs" },
-      { name: "Disolvente", color: "none", amount: "1", price: 3, kit: "1L" },
-    ],
+    productList: {
+      imprimacion: { name: "a", color: "a", amount: "1", price: 1, kit: "a", juntas: true },
+      disolvente: { name: "a", color: "a", amount: "1", price: 1, kit: "a" },
+      layers: [
+        { name: "c", color: "c", amount: "3", price: 2, kit: "c" },
+        { name: "c", color: "c", amount: "3", price: 2, kit: "c" },
+      ],
+      noCharge: { name: "o", color: "o", amount: "2", price: 1, kit: "o" },
+      threeD: { name: "o", color: "o", amount: "2", price: 1, kit: "o" },
+    },
     orderDate: "2020-10-21",
     area: 200,
     resinType: "Acrilica",
@@ -41,7 +47,7 @@ export default function ProductsDashboard({ title }) {
   });
 
   const [productList, setProductList] = useState({
-    imprimacion: { name: "a", color: "a", amount: "1", price: 1, kit: "a" },
+    imprimacion: { name: "a", color: "a", amount: "1", price: 1, kit: "a", juntas: true },
     disolvente: { name: "a", color: "a", amount: "1", price: 1, kit: "a" },
     layers: [
       { name: "c", color: "c", amount: "3", price: 2, kit: "c" },
