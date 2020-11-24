@@ -21,7 +21,7 @@ const Schema = new mongoose.Schema({
         type: String
     },
     productList: {
-        type: Array
+        type: Object
     },
     orderDate: {
         type: String

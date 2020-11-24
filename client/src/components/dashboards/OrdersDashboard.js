@@ -78,7 +78,17 @@ export default function OrdersDashboard({title}) {
   } 
 
   const getTotal = (order)=> {
-    return productArray.reduce((accumulator, product)=>accumulator+(order.productList[product].price*order.productList[product].amount) , 0)
+    console.log(tableValues)
+    
+    return productArray.reduce((accumulator, product)=>{
+      if(product !=="layers"){
+        console.log(accumulator)
+        return accumulator+(order.productList[product].price*order.productList[product].amount)
+      }
+      else{
+        return accumulator +2 //temporary
+      }
+    } , 0)
   }
 
   const makeNewProduct = () => {
