@@ -86,7 +86,7 @@ export default function OrdersDashboard({title}) {
         return accumulator+(order.productList[product].price*order.productList[product].amount)
       }
       else{
-        return accumulator +2 //temporary
+        return accumulator + (order.productList.layers.reduce((acc, layerProduct)=>(acc+layerProduct.price*layerProduct.amount),0)) //temporary
       }
     } , 0)
   }
