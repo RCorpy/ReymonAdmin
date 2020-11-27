@@ -5,57 +5,74 @@ import FormInput from "../contentComponents/formInput";
 import NewOrderRow from "./newOrderRow";
 import {Link} from 'react-router-dom'
 import {addOrder} from "../functions/fetchFunctions";
+import {getDate, getOrderNumberPrefix} from "../functions/otherFunctions"
 
 const URL = process.env.URL || "http://localhost:3000/";
 
 export default function ProductsDashboard({ title }) {
   const [tableValues, setTableValues] = useState({
-    orderNumber: "01118601NN",
+    orderNumber: getOrderNumberPrefix(),
     customer: {
-      telephone: "456798",
-      name: "Demo Customer",
-      postalCode: "46005",
-      address: "C/something",
-      city: "Valencia",
-      province: "Valencia",
+      telephone: "",
+      name: "",
+      postalCode: "",
+      address: "",
+      city: "",
+      province: "",
       country: "Spain",
-      contact: "Mr. Demo",
-      CIF: "03921841L",
-      email: "asdasd@fasd.com",
+      contact: "",
+      CIF: "",
+      email: "",
     },
     description: "",
     status: "proforma",
     extraNotes: "",
     category: "Naves",
 
-    orderDate: "2020-10-21",
-    area: 200,
+    orderDate: getDate(),
+    area: 0,
     resinType: "Acrilica",
     discount: 50,
     completed: false,
   });
 
   const [productList, setProductList] = useState({
-    imprimacion: { name: "a", color: "a", amount: 1, price: 1, kit: "a", juntas: true },
-    disolvente: { name: "a", color: "a", amount: 1, price: 1, kit: "a" },
+    imprimacion: { name: "", color: "", amount: 0, price: 1, kit: "", juntas: true },
+    disolvente: { name: "", color: "", amount: 0, price: 1, kit: "" },
     layers: [
-      { name: "c", color: "c", amount: 3, price: 2, kit: "c" },
-      { name: "c", color: "c", amount: 3, price: 2, kit: "c" },
+      { name: "", color: "", amount: 0, price: 1, kit: "" },
     ],
-    noCharge: { name: "o", color: "o", amount: 2, price: 1, kit: "o" },
-    threeD: { name: "o", color: "o", amount: 2, price: 1, kit: "o" },
+    noCharge: { name: "", color: "", amount: 0, price: 1, kit: "" },
+    threeD: { name: "", color: "", amount: 0, price: 1, kit: "" },
   });
+
+  const addOneLayer = ()=>{
+    setProductList((prev)=>({...prev, layers: [...prev.layers, { name: "", color: "", amount: 0, price: 1, kit: "" }]}))
+  }
+
+  const searchPrices = ()=>{
+    console.log("searching not implemeted yet") 
+  }
+
+  const filterEmptyLayers = () => {
+    let filteredLayers = productList.layers
+    filteredLayers = filteredLayers.filter(layer => (layer.amount>0))
+    if(filteredLayers.length>0){
+      setProductList((prev)=>({...prev, layers: filteredLayers}))
+    }
+    else{
+      setProductList((prev)=>({...prev, layers: [{ name: "", color: "", amount: 0, price: 1, kit: "" }]}))
+    }
+  }
 
   const calcTotal = () => {
     let totalProductList = {...productList}
-    //console.log(totalProductList.layers)
     let layersTotal = totalProductList.layers.reduce((accumulator, layer)=>(accumulator+(layer.amount*layer.price)), 0)
     let othersTotal =  ["imprimacion", "disolvente", "noCharge", "threeD"].reduce((accumulator, listPart)=>(accumulator+(totalProductList[listPart].price*totalProductList[listPart].amount)),0)
     return othersTotal + layersTotal
   }
 
   const modifyProductList = (objectKey, value) => {
-    console.log(value)
     setProductList((prev) => {
       let toReturn = { ...prev };
       toReturn[objectKey] = value
@@ -300,6 +317,9 @@ export default function ProductsDashboard({ title }) {
                       <div className="row">
                         <div className="col-md-12">
                           <span>Capas</span>
+                          <button onClick={addOneLayer}><i class="fas fa-folder-plus"></i></button>
+                          <button onClick={searchPrices}><i class="fas fa-search"></i></button>
+                          <button onClick={filterEmptyLayers}><i class="fas fa-filter"></i></button>
                         </div>
                         <NewOrderRow
                           items={productList.layers}
@@ -338,9 +358,11 @@ export default function ProductsDashboard({ title }) {
                     </div>
                     <div className="card-body">
                       <Link to={"/Orders"}>
-                        <Button onClick={()=>addOrder({...tableValues, productList: {...productList}})}>Finalizar</Button>
+                        <Button onClick={
+                          ()=>{filterEmptyLayers(); addOrder({...tableValues, productList: {...productList}})}
+                          }>Finalizar</Button>
                       </Link>
-                        <Button variant="success" onClick={()=>addOrder({...tableValues, productList: {...productList}})}>Crear y modificar</Button>
+                        <Button variant="success" onClick={()=>{filterEmptyLayers(); addOrder({...tableValues, productList: {...productList}})}}>Crear y modificar</Button>
                       <Link to="/">
                         <Button variant="danger">Cancelar</Button>
                       </Link>

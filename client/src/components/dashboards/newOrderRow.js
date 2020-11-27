@@ -5,11 +5,10 @@ export default function newOrderRow({ items, changeFunction }) {
     const arrayChange = (index, value) => {
         let toReturn = items
         items[index] = value
-        console.log(value)
         return toReturn
     }
 
-  if (items.length && items.length > 1) {
+  if (items.length) {
     return items.map((element, index) => (
       <>
         <input className="col-md-2" value={element.name} onChange={(e)=>changeFunction(arrayChange(index, {...element, name: e.target.value}))} />
