@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import Card from "../contentComponents/Card";
-import { InputGroup, FormControl } from "react-bootstrap";
+import { InputGroup, FormControl, Button } from "react-bootstrap";
 import FormInput from "../contentComponents/formInput";
 import NewOrderRow from "./newOrderRow";
+import {Link} from 'react-router-dom'
 import {
   fetchModifyProduct,
   fetchDeleteProduct,
@@ -30,14 +31,14 @@ export default function ProductsDashboard({ title }) {
     extraNotes: "",
     category: "Naves",
     productList: {
-      imprimacion: { name: "a", color: "a", amount: "1", price: 1, kit: "a", juntas: true },
-      disolvente: { name: "a", color: "a", amount: "1", price: 1, kit: "a" },
+      imprimacion: { name: "a", color: "a", amount: 1, price: 1, kit: "a", juntas: true },
+      disolvente: { name: "a", color: "a", amount: 1, price: 1, kit: "a" },
       layers: [
-        { name: "c", color: "c", amount: "3", price: 2, kit: "c" },
-        { name: "c", color: "c", amount: "3", price: 2, kit: "c" },
+        { name: "c", color: "c", amount: 3, price: 2, kit: "c" },
+        { name: "c", color: "c", amount: 3, price: 2, kit: "c" },
       ],
-      noCharge: { name: "o", color: "o", amount: "2", price: 1, kit: "o" },
-      threeD: { name: "o", color: "o", amount: "2", price: 1, kit: "o" },
+      noCharge: { name: "o", color: "o", amount: 2, price: 1, kit: "o" },
+      threeD: { name: "o", color: "o", amount: 2, price: 1, kit: "o" },
     },
     orderDate: "2020-10-21",
     area: 200,
@@ -47,15 +48,23 @@ export default function ProductsDashboard({ title }) {
   });
 
   const [productList, setProductList] = useState({
-    imprimacion: { name: "a", color: "a", amount: "1", price: 1, kit: "a", juntas: true },
-    disolvente: { name: "a", color: "a", amount: "1", price: 1, kit: "a" },
+    imprimacion: { name: "a", color: "a", amount: 1, price: 1, kit: "a", juntas: true },
+    disolvente: { name: "a", color: "a", amount: 1, price: 1, kit: "a" },
     layers: [
-      { name: "c", color: "c", amount: "3", price: 2, kit: "c" },
-      { name: "c", color: "c", amount: "3", price: 2, kit: "c" },
+      { name: "c", color: "c", amount: 3, price: 2, kit: "c" },
+      { name: "c", color: "c", amount: 3, price: 2, kit: "c" },
     ],
-    noCharge: { name: "o", color: "o", amount: "2", price: 1, kit: "o" },
-    threeD: { name: "o", color: "o", amount: "2", price: 1, kit: "o" },
+    noCharge: { name: "o", color: "o", amount: 2, price: 1, kit: "o" },
+    threeD: { name: "o", color: "o", amount: 2, price: 1, kit: "o" },
   });
+
+  const calcTotal = () => {
+    let totalProductList = {...productList}
+    //console.log(totalProductList.layers)
+    let layersTotal = totalProductList.layers.reduce((accumulator, layer)=>(accumulator+(layer.amount*layer.price)), 0)
+    let othersTotal =  ["imprimacion", "disolvente", "noCharge", "threeD"].reduce((accumulator, listPart)=>(accumulator+(totalProductList[listPart].price*totalProductList[listPart].amount)),0)
+    return othersTotal + layersTotal
+  }
 
   const modifyProductList = (objectKey, value) => {
     console.log(value)
@@ -337,6 +346,14 @@ export default function ProductsDashboard({ title }) {
                           changeFunction={(v)=>{modifyProductList("threeD", v)}}
                         />
                       </div>
+                            <div>Total: {calcTotal()}</div>
+                    </div>
+                    <div className="card-body">
+                      <Button>Finalizar</Button>
+                      <Button variant="success">Crear y modificar</Button>
+                      <Link to="/">
+                        <Button variant="danger">Cancelar</Button>
+                      </Link>
                     </div>
                   </div>
                 </div>
