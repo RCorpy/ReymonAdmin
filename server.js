@@ -134,18 +134,29 @@ app.get('/clients', async (req, res) => {
 //post
 
 app.post('/neworder', async (req, res) => {
-    let newEntry = await new Order2020(req.body)
+    let newEntry
+    if(req.body.year === "2019") {newEntry = await new Order2019(req.body.data)}
+    if(req.body.year === "2020") {newEntry = await new Order2020(req.body.data)}
+    if(req.body.year === "2021") {newEntry = await new Order2021(req.body.data)}
+
     newEntry.save()
 })
 
 app.post('/newproduct', async (req, res) => {
-    let newEntry = await new ProductModel(req.body)
-    newEntry.save()
+    const data = await ClientModel.findOne({name: req.body.data.name})
+    console.log(data)
+    if(!data){
+    let newEntry = await new ProductModel(req.body.data)
+    newEntry.save()}
 })
 
 app.post('/newclient', async (req, res) => {
-    let newEntry = await new ClientModel(req.body)
-    newEntry.save()
+    const data = await ClientModel.findOne({telephone: req.body.telephone})
+    if(!data){
+        let fullData = req.body.data
+        fullData.telephone = req.body.telephone
+        let newEntry = await new ClientModel(fullData)
+    newEntry.save()}
 })
 
 //modify, hay que buscar como se hace

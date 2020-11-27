@@ -4,10 +4,7 @@ import { InputGroup, FormControl, Button } from "react-bootstrap";
 import FormInput from "../contentComponents/formInput";
 import NewOrderRow from "./newOrderRow";
 import {Link} from 'react-router-dom'
-import {
-  fetchModifyProduct,
-  fetchDeleteProduct,
-} from "../functions/fetchFunctions";
+import {addOrder} from "../functions/fetchFunctions";
 
 const URL = process.env.URL || "http://localhost:3000/";
 
@@ -30,16 +27,7 @@ export default function ProductsDashboard({ title }) {
     status: "proforma",
     extraNotes: "",
     category: "Naves",
-    productList: {
-      imprimacion: { name: "a", color: "a", amount: 1, price: 1, kit: "a", juntas: true },
-      disolvente: { name: "a", color: "a", amount: 1, price: 1, kit: "a" },
-      layers: [
-        { name: "c", color: "c", amount: 3, price: 2, kit: "c" },
-        { name: "c", color: "c", amount: 3, price: 2, kit: "c" },
-      ],
-      noCharge: { name: "o", color: "o", amount: 2, price: 1, kit: "o" },
-      threeD: { name: "o", color: "o", amount: 2, price: 1, kit: "o" },
-    },
+
     orderDate: "2020-10-21",
     area: 200,
     resinType: "Acrilica",
@@ -349,8 +337,10 @@ export default function ProductsDashboard({ title }) {
                             <div>Total: {calcTotal()}</div>
                     </div>
                     <div className="card-body">
-                      <Button>Finalizar</Button>
-                      <Button variant="success">Crear y modificar</Button>
+                      <Link to={"/Orders"}>
+                        <Button onClick={()=>addOrder({...tableValues, productList: {...productList}})}>Finalizar</Button>
+                      </Link>
+                        <Button variant="success" onClick={()=>addOrder({...tableValues, productList: {...productList}})}>Crear y modificar</Button>
                       <Link to="/">
                         <Button variant="danger">Cancelar</Button>
                       </Link>
