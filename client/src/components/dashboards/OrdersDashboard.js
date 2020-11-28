@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from "react";
 import Card from "../contentComponents/Card"
 import {ButtonGroup, Table} from "react-bootstrap"
-import {fetchModifyOrder, fetchDeleteOrder} from '../functions/fetchFunctions'
+import {fetchModifyOrder, fetchDeleteOrder, fetchToExcel} from '../functions/fetchFunctions'
 import Validator from '../functions/validators'
 import {Button, InputGroup, ButtonToolbar, FormControl} from 'react-bootstrap';
 
@@ -228,12 +228,13 @@ export default function OrdersDashboard({title}) {
 
               {/* Filter options*/}
               <ButtonToolbar
+                style={{marginBottom: "10px"}}
                 className="justify-content-between"
                 aria-label="Toolbar with Button groups"
               >
                 <ButtonGroup aria-label="First group">
                   <Button variant={filter.completed ? "primary" : "secondary"} onClick={()=>setFilter(prev=>({...prev, completed: !prev.completed}))}>{filter.completed ? "Completed Hidden" : "Completed Shown"}</Button>
-                  <Button variant={statusFilter === "all" ? "primary" : statusFilter == "proforma" ? "secondary" : "info"} onClick={()=>setStatusFilter(getNextStatusFilter())}>{statusFilter === "all" ? "All" : statusFilter == "proforma" ? "Proformas" : "Presupuestos"}</Button>
+                  <Button style={{marginLeft: "5px", width: "130px"}}variant={statusFilter === "all" ? "primary" : statusFilter == "proforma" ? "secondary" : "info"} onClick={()=>setStatusFilter(getNextStatusFilter())}>{statusFilter === "all" ? "All" : statusFilter == "proforma" ? "Proformas" : "Presupuestos"}</Button>
                 </ButtonGroup>
                 <ButtonGroup aria-label="First group">
                   <Button variant={filter.search.type==="date" ? "primary" : "secondary"} onClick={()=>setFilter(prev=>({...prev, search:{...prev.search, type: "date"}}))}>Date</Button>{' '}
@@ -241,8 +242,8 @@ export default function OrdersDashboard({title}) {
                   <Button variant={filter.search.type==="telephone" ? "primary" : "secondary"} onClick={()=>setFilter(prev=>({...prev, search:{...prev.search, type: "telephone"}}))}>Telephone</Button>{' '}
                   <Button variant={filter.search.type==="orderNumber" ? "primary" : "secondary"} onClick={()=>setFilter(prev=>({...prev, search:{...prev.search, type: "orderNumber"}}))}>Order Nº</Button>
                 </ButtonGroup>
-                <InputGroup>
-                  <InputGroup.Prepend> {/* MAKE THIS FIXED SIZE SO IT DOESNT WOBBLE */}
+                <InputGroup style={{width: "280px"}}>
+                  <InputGroup.Prepend > {/* MAKE THIS FIXED SIZE SO IT DOESNT WOBBLE */}
                     <InputGroup.Text id="btnGroupAddon2">{filter.search.type==="orderNumber" ? "Order Nº" : filter.search.type.charAt(0).toUpperCase() + filter.search.type.slice(1)}</InputGroup.Text>
                   </InputGroup.Prepend>
                   <FormControl
@@ -431,6 +432,7 @@ export default function OrdersDashboard({title}) {
           <div className="form-group dashboardformgroup">
             <button className="btn btn-primary" type="submit">Save</button>
             <button className="btn btn-secondary" type="button" onClick={()=>setShowMyAsideDiv(false)}>Close</button>
+            <button className="btn btn-info" type="button" onClick={()=>fetchToExcel(toModifyValues)}>Excel</button>
           </div>
           </form>
         </div>

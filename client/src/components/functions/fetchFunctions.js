@@ -161,6 +161,21 @@ const fetchDeleteProduct = (product) => {
   });
 };
 
+const fetchToExcel = (fileData)=>{
+  let url = "http://localhost:3000/toexcel";
+  //console.log(fileData)
+  fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      data: fileData,
+    }),
+  }).then((result) => {
+    // do something with the result
+    console.log("Completed with result:", result);
+  });
+}
+
 module.exports = {
   fetchModifyOrder: modifyOrder,
   fetchDeleteOrder: deleteOrder,
@@ -168,5 +183,7 @@ module.exports = {
   fetchDeleteClient: fetchDeleteClient,
   fetchModifyProduct: fetchModifyProduct,
   fetchDeleteProduct: fetchDeleteProduct,
+  fetchToExcel: fetchToExcel,
   addOrder: addOrder,
+
 };

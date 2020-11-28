@@ -206,6 +206,23 @@ app.post('/deleteclient', async (req, res) => {
     deleteEntry.delete()
 })
 
+// -------------------------------EXCEL --------------------------------------->
+
+app.post('/toexcel', async (req, res)=>{
+    
+    const exlBuf = await readFileAsync("clean.xlsx");
+    //console.log(req.body)
+    XlsxPopulate.fromDataAsync(exlBuf)
+    .then(workbook => {
+        // Modify the workbook.
+        workbook.sheet("proforma").cell("C9").value(req.body.data.customer.name);
+
+        // Write to file.
+        return workbook.toFileAsync("./out.xlsx");
+    });
+
+})
+
 
 app.get("*", (req, res)=>{
     res.sendFile(path.join(__dirname, "/client/build/index.html"))
