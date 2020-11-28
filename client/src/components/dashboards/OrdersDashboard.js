@@ -54,6 +54,7 @@ export default function OrdersDashboard({title}) {
   const [showMyAsideDiv, setShowMyAsideDiv]=useState(false)
   const [tableValues, setTableValues] = useState([EXAMPLE_ORDER])
   const [toModifyValues, setToModifyValues] = useState(EXAMPLE_ORDER)
+  const [statusFilter, setStatusFilter] = useState("all")
   const [filter, setFilter] = useState({completed: true, search: {type: "orderNumber", value: ""}})
 
   const myAsideDivStyle = showMyAsideDiv ? {display: "inline"} :  {display: "none"}
@@ -64,6 +65,12 @@ export default function OrdersDashboard({title}) {
     .then(res=>res.json())
     .then(data=>setTableValues(data))
   },[])
+
+  const getNextStatusFilter = () => {
+    if(statusFilter=="all") return "proforma"
+    else if(statusFilter=="proforma") return "presupuesto"
+    else return "all"
+  }
 
   const modifyOrder = (order, modifiedOrder) => {
     fetchModifyOrder(order, modifiedOrder)
@@ -128,6 +135,9 @@ export default function OrdersDashboard({title}) {
             break
         }
       }
+    }
+    if(statusFilter!=="all"){
+      data = data.filter(order=>(order.status===statusFilter))
     }
 
     return data
@@ -223,6 +233,7 @@ export default function OrdersDashboard({title}) {
               >
                 <ButtonGroup aria-label="First group">
                   <Button variant={filter.completed ? "primary" : "secondary"} onClick={()=>setFilter(prev=>({...prev, completed: !prev.completed}))}>{filter.completed ? "Completed Hidden" : "Completed Shown"}</Button>
+                  <Button variant={statusFilter === "all" ? "primary" : statusFilter == "proforma" ? "secondary" : "info"} onClick={()=>setStatusFilter(getNextStatusFilter())}>{statusFilter === "all" ? "All" : statusFilter == "proforma" ? "Proformas" : "Presupuestos"}</Button>
                 </ButtonGroup>
                 <ButtonGroup aria-label="First group">
                   <Button variant={filter.search.type==="date" ? "primary" : "secondary"} onClick={()=>setFilter(prev=>({...prev, search:{...prev.search, type: "date"}}))}>Date</Button>{' '}

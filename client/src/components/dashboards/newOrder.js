@@ -233,12 +233,20 @@ export default function ProductsDashboard({ title }) {
                             toModify="orderNumber"
                             setTableValuesFunction={setTableValues}
                           />
-                          <FormInput
-                            title="Status"
-                            value={tableValues.status}
-                            toModify="status"
-                            setTableValuesFunction={setTableValues}
-                          />
+                          <InputGroup>
+                            <InputGroup.Prepend>
+                              <InputGroup.Text>Status</InputGroup.Text>
+                            </InputGroup.Prepend>
+                            <select
+                              className="form-control select2"
+                              style={{ width: "100%" }}
+                              value={tableValues.status}
+                              onChange={(e)=>{e.persist();setTableValues((prev)=>({...prev, status: e.target.value}))}}
+                            >
+                              <option value="proforma">Proforma</option>
+                              <option value="presupuesto">Presupuesto</option>
+                            </select>
+                          </InputGroup>
                           <FormInput
                             title="Descripción"
                             value={tableValues.description}
