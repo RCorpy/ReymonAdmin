@@ -208,16 +208,75 @@ app.post('/deleteclient', async (req, res) => {
 
 // -------------------------------EXCEL --------------------------------------->
 
+const BLUE = "0000FF"
+const RED = "FF0000"
+const WHITE = "FFFFFF"
+
 app.post('/toexcel', async (req, res)=>{
     
     const exlBuf = await readFileAsync("clean.xlsx");
+    const data = req.body.data
     //console.log(req.body)
     XlsxPopulate.fromDataAsync(exlBuf)
     .then(workbook => {
         // Modify the workbook.
-        workbook.sheet("proforma").cell("C9").value(req.body.data.customer.name);
+        workbook.sheet("proforma").cell("C9").value(data.customer.name);
+        workbook.sheet("proforma").cell("C10").value(data.customer.address);
+        workbook.sheet("proforma").cell("C11").value(data.customer.city);
+        workbook.sheet("proforma").cell("C12").value(data.customer.country);
+        workbook.sheet("proforma").cell("C13").value(data.customer.contact);
+        workbook.sheet("proforma").cell("C14").value(data.description);
 
+        workbook.sheet("proforma").cell("E9").value(data.customer.CIF);
+        workbook.sheet("proforma").cell("E10").value(data.customer.postalCode);
+        workbook.sheet("proforma").cell("E11").value(data.customer.province);
+        workbook.sheet("proforma").cell("E12").value(data.customer.telephone);
+        workbook.sheet("proforma").cell("E13").value(data.customer.email);
+
+        workbook.sheet("proforma").cell("E5").value(`Nº:${data.orderNumber}`);
+        workbook.sheet("proforma").cell("E6").value(`Fecha:${data.orderDate.split(".").join("/")}`);
+        workbook.sheet("proforma").cell("E7").value(`${data.category}`);
+
+        workbook.sheet("proforma").cell("E7").style("fill", {color:{rgb:RED}, fontColor: WHITE});
+        // writing the productList #
+
+        let cellRow = 19
+        const currentCell = (letter="B")=> {return `${letter}${cellRow}`}
+        const makeTitle = (title)=> {
+            workbook.sheet("proforma").cell(currentCell()).value(title).style({ fontColor: WHITE })//.add(title, { fontColor: WHITE });
+            workbook.sheet("proforma").cell(currentCell()).style("fill", {color:{rgb:BLUE}, fontColor: WHITE});
+            cellRow = cellRow+1
+        }
+        const writeRow = (rowData) => {
+            workbook.sheet("proforma").cell(currentCell()).value(rowData.kit)
+            workbook.sheet("proforma").cell(currentCell("C")).value(`${rowData.name.toUpperCase()} ${rowData.color}`)
+            workbook.sheet("proforma").cell(currentCell("D")).value(parseFloat(rowData.amount))
+            workbook.sheet("proforma").cell(currentCell("E")).value(parseFloat(rowData.price))
+            cellRow = cellRow+1
+        }
+        const productList = data.productList
+        const getAmount = (product) => {return parseFloat(productList[product].amount)}
+        
+        const getHarinaDeCuarzoInfo = () => { return [0, "KGS 25"] } // to improve
+
+        //console.log(workbook.sheet("proforma").cell("B19").value())
+        if(getAmount("imprimacion")>0){
+            let title = productList.imprimacion.juntas ? "IMPRIMACIÓN Y JUNTAS" : "IMPRIMACIÓN"
+            makeTitle(title)
+            writeRow(productList.imprimacion)
+            workbook.sheet("proforma").cell(currentCell()).value("Catalizador 5 a 1").style({bold:false})
+            if(productList.imprimacion.juntas){
+                cellRow = cellRow+1
+                const [harinaAmount, harinaKit] = getHarinaDeCuarzoInfo()
+                writeRow({ name: "HARINA DE CUARZO", color: "", amount: harinaAmount, price: 49, kit: harinaKit})
+            }
+        }
+        
+        //falta disolvente, layers, noCharge y threeD
+        
+        
         // Write to file.
+
         return workbook.toFileAsync("./out.xlsx");
     });
 
