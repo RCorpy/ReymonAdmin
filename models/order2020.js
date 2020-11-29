@@ -38,6 +38,10 @@ const Schema = new mongoose.Schema({
     },
     completed: {
         type: Boolean
+    },
+    dosManos: {
+        default: false,
+        type: Boolean
     }
 
 })

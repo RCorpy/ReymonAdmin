@@ -44,7 +44,8 @@ const EXAMPLE_ORDER = {
   area: 200,
   resinType: "Acrilica",
   discount: 50,
-  completed: false
+  completed: false,
+  dosManos: false
 }
 
 

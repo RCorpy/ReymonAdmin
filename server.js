@@ -9,30 +9,11 @@ const Order2021 = require('./models/order2021')
 const ProductModel = require('./models/productModel')
 const ClientModel = require('./models/clientModel')
 
-
 const XlsxPopulate = require('xlsx-populate');
 
 const fs = require("fs");
 const util = require("util");
 const readFileAsync = util.promisify(fs.readFile);
-const writeFileAsync = util.promisify(fs.writeFile);
-
-/*(async function() {
-
-    const exlBuf = await readFileAsync("PRESUPUESTO 6230.xlsx");
-    console.log(exlBuf)
-    XlsxPopulate.fromDataAsync(exlBuf)
-    .then(workbook => {
-        // Modify the workbook.
-        workbook.sheet("proforma").cell("D19").value(2);
-
-        // Write to file.
-        return workbook.toFileAsync("./out.xlsx");
-    });
-})()*/
-
-
-
 
 const app = express()
 const server = http.createServer(app) 
@@ -211,6 +192,19 @@ app.post('/deleteclient', async (req, res) => {
 const BLUE = "0000FF"
 const RED = "FF0000"
 const WHITE = "FFFFFF"
+const BLACK = "000000"
+
+const getLayerWeight = (layer) => {return (parseFloat(layer.kit.split(" ")) || 0 )*parseFloat(layer.amount)}
+
+const getTotalWeight = (productList) => {
+    return (
+        getLayerWeight(productList.imprimacion)+
+        getLayerWeight(productList.disolvente)+
+        getLayerWeight(productList.noCharge)+
+        getLayerWeight(productList.threeD)+
+        productList.layers.reduce((accumulator, element)=>{return accumulator+getLayerWeight(element)},0)
+        )
+}
 
 app.post('/toexcel', async (req, res)=>{
     
@@ -243,8 +237,8 @@ app.post('/toexcel', async (req, res)=>{
         let cellRow = 19
         const currentCell = (letter="B")=> {return `${letter}${cellRow}`}
         const makeTitle = (title)=> {
-            workbook.sheet("proforma").cell(currentCell()).value(title).style({ fontColor: WHITE })//.add(title, { fontColor: WHITE });
-            workbook.sheet("proforma").cell(currentCell()).style("fill", {color:{rgb:BLUE}, fontColor: WHITE});
+            workbook.sheet("proforma").cell(currentCell()).value(title).style({ fontColor: WHITE, bold: true })//.add(title, { fontColor: WHITE });
+            workbook.sheet("proforma").cell(currentCell()).style("fill", {color:{rgb:BLUE}, fontColor: WHITE, bold: true});
             cellRow = cellRow+1
         }
         const writeRow = (rowData) => {
@@ -259,7 +253,6 @@ app.post('/toexcel', async (req, res)=>{
         
         const getHarinaDeCuarzoInfo = () => { return [0, "KGS 25"] } // to improve
 
-        //console.log(workbook.sheet("proforma").cell("B19").value())
         if(getAmount("imprimacion")>0){
             let title = productList.imprimacion.juntas ? "IMPRIMACIÓN Y JUNTAS" : "IMPRIMACIÓN"
             makeTitle(title)
@@ -269,12 +262,34 @@ app.post('/toexcel', async (req, res)=>{
                 cellRow = cellRow+1
                 const [harinaAmount, harinaKit] = getHarinaDeCuarzoInfo()
                 writeRow({ name: "HARINA DE CUARZO", color: "", amount: harinaAmount, price: 49, kit: harinaKit})
+                workbook.sheet("proforma").cell(currentCell()).value("Catalizador 5 a 1").style({bold:false})
             }
         }
         
-        //falta disolvente, layers, noCharge y threeD
+        if(getAmount("disolvente")>0){
+            makeTitle("DISOLVENTE")
+            writeRow(productList.disolvente)
+        }
         
+        makeTitle(data.dosManos ? "DOS MANOS" : "UNA MANO")
+        productList.layers.map((layer)=>{
+            writeRow(layer)
+            workbook.sheet("proforma").cell(currentCell()).value("Catalizador 5 a 1").style({bold:false})
+            workbook.sheet("proforma").cell(currentCell("C")).value(new XlsxPopulate.RichText)
+            workbook.sheet("proforma").cell(currentCell("C")).value().add("GRISES", {fontColor: RED, bold: true, fontSize: 12}).add(" 100% Sólidos (Primera y Segunda Mano)", {fontColor: BLACK, bold: true, fontSize: 12})
+            cellRow = cellRow+1
+        })
         
+        if(getAmount("noCharge")>0){
+            makeTitle("SIN CARGO")
+            writeRow(productList.noCharge)
+        }
+        if(getAmount("threeD")>0){
+            makeTitle("3D")
+            writeRow(productList.threeD)
+        }
+        
+        workbook.sheet("proforma").cell("D37").value(getTotalWeight(productList))
         // Write to file.
 
         return workbook.toFileAsync("./out.xlsx");
