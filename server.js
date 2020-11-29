@@ -292,7 +292,13 @@ app.post('/toexcel', async (req, res)=>{
         workbook.sheet("proforma").cell("D37").value(getTotalWeight(productList))
         // Write to file.
 
-        return workbook.toFileAsync("./out.xlsx");
+        const outFilePath = "/out.xlsx" //can be improved for storage
+
+        require('child_process').exec(`start "" ${path.join(__dirname, "")}`);
+        require('child_process').exec(`start "" ${path.join(__dirname, outFilePath)}`);
+        return workbook.toFileAsync(`.${outFilePath}`);
+        
+
     });
 
 })
