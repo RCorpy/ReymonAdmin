@@ -292,13 +292,35 @@ app.post('/toexcel', async (req, res)=>{
         workbook.sheet("proforma").cell("D37").value(getTotalWeight(productList))
         // Write to file.
 
-        const outFilePath = "/out.xlsx" //can be improved for storage
+        const getYear = ()=>{
+            let thisYear = new Date()
+            return thisYear.getUTCFullYear()
+        }
+        const outFilePath = ()=>{
+            let dir = `/TEKLAKE${getYear()}/${data.orderNumber}`
+            if (!fs.existsSync(path.join(__dirname, dir))){
+                fs.mkdir(path.join(__dirname, dir), { recursive: true }, (err)=>{
+                    if(err){throw err}
+                });
+            }
+            return path.join(__dirname, dir, `${data.orderNumber}.xlsx`)
 
-        require('child_process').exec(`start "" ${path.join(__dirname, "")}`);
-        require('child_process').exec(`start "" ${path.join(__dirname, outFilePath)}`);
-        return workbook.toFileAsync(`.${outFilePath}`);
+        } //can be improved for storage
         
-
+        workbook.toFileAsync(`${outFilePath()}`)
+            
+        setTimeout(function(){ 
+            try{openFiles()}
+            catch{
+                require('child_process').exec(`start "" ${path.join(__dirname, "")}`);
+                console.log("wasnt fast enough")
+            } 
+        }, 1200);
+                
+        const openFiles = ()=>{
+            require('child_process').exec(`start "" ${path.join(__dirname, `TEKLAKE${getYear()}`,data.orderNumber)}`);
+            require('child_process').exec(`start "" ${outFilePath()}`); 
+        }
     });
 
 })
