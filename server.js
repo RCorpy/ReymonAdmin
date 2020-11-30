@@ -307,20 +307,12 @@ app.post('/toexcel', async (req, res)=>{
 
         } //can be improved for storage
         
-        workbook.toFileAsync(`${outFilePath()}`)
-            
-        setTimeout(function(){ 
-            try{openFiles()}
-            catch{
-                require('child_process').exec(`start "" ${path.join(__dirname, "")}`);
-                console.log("wasnt fast enough")
-            } 
-        }, 1200);
-                
         const openFiles = ()=>{
             require('child_process').exec(`start "" ${path.join(__dirname, `TEKLAKE${getYear()}`,data.orderNumber)}`);
             require('child_process').exec(`start "" ${outFilePath()}`); 
         }
+        
+        workbook.toFileAsync(`${outFilePath()}`).then(()=>openFiles())
     });
 
 })
