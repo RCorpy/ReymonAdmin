@@ -51,7 +51,11 @@ export default function ProductsDashboard({ title }) {
   }
 
   const searchPrices = ()=>{
-    console.log("searching not implemeted yet") 
+    let url = "http://localhost:3000/prices";
+    fetch(url)
+    .then(res=>res.json())
+    .then(data => console.log(data))
+    
   }
 
   const filterEmptyLayers = () => {

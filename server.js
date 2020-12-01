@@ -318,6 +318,39 @@ app.post('/toexcel', async (req, res)=>{
 })
 
 
+app.get('/prices', async (req, res) => {
+    let data = {}
+
+    const exlBuf = await readFileAsync("prices.xlsx");
+    //console.log(req.body)
+    XlsxPopulate.fromDataAsync(exlBuf)
+    .then(workbook => {
+        const book = workbook.sheet(0)
+        const bookRows = 200
+        let currentRow = 18
+        let settledTitle = false
+        let title = ""
+
+        while(currentRow<bookRows){
+            if(book.cell(`F${currentRow}`).value() && !settledTitle){
+                title = book.cell(`B${currentRow-1}`).value()
+                settledTitle = true
+
+                //remove special characters
+                console.log(title)
+            }
+
+            if(!book.cell(`F${currentRow}`).value()){
+                settledTitle = false
+            }
+            
+            currentRow++
+        }
+        data = book.cell("F18").value()
+        res.json(data)
+    })
+})
+
 app.get("*", (req, res)=>{
     res.sendFile(path.join(__dirname, "/client/build/index.html"))
 })
