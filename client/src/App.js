@@ -8,10 +8,13 @@ import NewOrder from './components/dashboards/newOrder'
 import Charts from './components/Charts'
 import Footer from './components/Footer'
 import {Route, Switch, BrowserRouter } from 'react-router-dom'
+import { Provider } from 'react-redux';
+import store from './redux/store'
 
 function App() {
   return (
     <div className="App">
+      <Provider store={store}>
       <BrowserRouter>
       <div className="wrapper">
         <Header />
@@ -27,6 +30,7 @@ function App() {
         <Footer />
       </div>
       </BrowserRouter>
+      </Provider>
     </div>
   );
 }

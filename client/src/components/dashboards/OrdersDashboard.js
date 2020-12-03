@@ -4,6 +4,7 @@ import {ButtonGroup, Table} from "react-bootstrap"
 import {fetchModifyOrder, fetchDeleteOrder, fetchToExcel} from '../functions/fetchFunctions'
 import Validator from '../functions/validators'
 import {Button, InputGroup, ButtonToolbar, FormControl} from 'react-bootstrap';
+import {connect} from 'react-redux'
 
 
 const URL = process.env.URL || 'http://localhost:3000/'
@@ -50,7 +51,7 @@ const EXAMPLE_ORDER = {
 
 
 
-export default function OrdersDashboard({title}) {
+function OrdersDashboard({title, updateTableValues}) {
 
   const [showMyAsideDiv, setShowMyAsideDiv]=useState(false)
   const [tableValues, setTableValues] = useState([EXAMPLE_ORDER])
@@ -236,6 +237,7 @@ export default function OrdersDashboard({title}) {
                 <ButtonGroup aria-label="First group">
                   <Button variant={filter.completed ? "primary" : "secondary"} onClick={()=>setFilter(prev=>({...prev, completed: !prev.completed}))}>{filter.completed ? "Completed Hidden" : "Completed Shown"}</Button>
                   <Button style={{marginLeft: "5px", width: "130px"}}variant={statusFilter === "all" ? "primary" : statusFilter == "proforma" ? "secondary" : "info"} onClick={()=>setStatusFilter(getNextStatusFilter())}>{statusFilter === "all" ? "All" : statusFilter == "proforma" ? "Proformas" : "Presupuestos"}</Button>
+                  <Button onClick={()=>updateTableValues()}>Reload</Button>
                 </ButtonGroup>
                 <ButtonGroup aria-label="First group">
                   <Button variant={filter.search.type==="date" ? "primary" : "secondary"} onClick={()=>setFilter(prev=>({...prev, search:{...prev.search, type: "date"}}))}>Date</Button>{' '}
@@ -443,3 +445,26 @@ export default function OrdersDashboard({title}) {
     </div>
   );
 }
+
+const connectedOrdersDashboard = connect(state => ({state:state}), (dispatch)=>({
+  updateTableValues: () => {
+    fetch(`${URL}orders/all`)
+    .then(res=>res.json())
+    .then(data=>dispatch({
+      type:'UPDATE_TABLEVALUES',
+      data: data
+    }))
+
+  }
+}))(OrdersDashboard)
+
+export default connectedOrdersDashboard;
+
+/*
+const connectedOrdersDashboard = connect(state => ({state:state}), (dispatch)=>({
+  updateTableValues: (movie) => dispatch({
+      type:'UPDATE_MODAL',
+      movie: movie
+  })
+}))(OrdersDashboard)
+*/
