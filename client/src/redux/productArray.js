@@ -1,0 +1,1 @@
+export const productArray = ["imprimacion", "disolvente", "layers", "noCharge", "threeD"]

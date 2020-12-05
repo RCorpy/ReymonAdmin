@@ -2,11 +2,12 @@ import React, {useState, useEffect} from "react";
 import Card from "../contentComponents/Card"
 import {Table} from "react-bootstrap"
 import {fetchModifyClient, fetchDeleteClient} from '../functions/fetchFunctions'
+import Modal from '../Modal'
 
 const URL = process.env.URL || 'http://localhost:3000/'
 
 export default function ClientDashboard({title}) {
-
+  const [modalShow, setModalShow] = useState(false)
   const [tableValues, setTableValues] = useState([
     {
       _id: "qqewqyuweoq",       
@@ -98,6 +99,11 @@ export default function ClientDashboard({title}) {
         {/* /.container-fluid */}
       </div>
       {/* /.content */}
+      <button onClick={() => setModalShow(true)}>MODAL</button>
+      <Modal
+        show={modalShow}
+        onHide={() => setModalShow(false)}
+      />
     </div>
   );
 }

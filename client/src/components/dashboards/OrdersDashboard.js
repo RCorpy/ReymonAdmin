@@ -6,11 +6,10 @@ import Validator from '../functions/validators'
 import {Button, InputGroup, ButtonToolbar, FormControl} from 'react-bootstrap';
 import {connect} from 'react-redux'
 import {EXAMPLE_ORDER} from '../../redux/exampleOrder'
+import {productArray} from '../../redux/productArray'
 
 const URL = process.env.URL || 'http://localhost:3000/'
 const validate = new Validator()
-
-const productArray = ["imprimacion", "disolvente", "layers", "noCharge", "threeD"]
 
 
 function OrdersDashboard({title, updateTableValues, setTableValues, state}) {
