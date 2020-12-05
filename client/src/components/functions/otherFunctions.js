@@ -8,7 +8,9 @@ const getDate = () =>{
 const getOrderNumberPrefix = () => {
     let newDate = new Date()
     let yearPart = `${newDate.getUTCFullYear()}`.substring(2,4)
-    return `${yearPart}${newDate.getUTCMonth()+1}${newDate.getUTCDate()+1}`
+    let monthPart = `${newDate.getUTCMonth()+1 <10 ? "0"+newDate.getUTCMonth()+1 : newDate.getUTCMonth()+1 }`
+    let dayPart = `${newDate.getUTCDate() <10 ? "0" + newDate.getUTCDate(): newDate.getUTCDate()}`
+    return `${yearPart}${monthPart}${dayPart}`
 }
 
 module.exports = {

@@ -6,12 +6,13 @@ import NewOrderRow from "./newOrderRow";
 import {Link} from 'react-router-dom'
 import {addOrder} from "../functions/fetchFunctions";
 import {getDate, getOrderNumberPrefix} from "../functions/otherFunctions"
+import {connect} from 'react-redux'
 
 const URL = process.env.URL || "http://localhost:3000/";
 
-export default function ProductsDashboard({ title }) {
+function NewOrderDashboard({ title , addReduxOrder, state}) {
   const [tableValues, setTableValues] = useState({
-    orderNumber: getOrderNumberPrefix(),
+    orderNumber: state.nextOrderNumber ? state.nextOrderNumber : getOrderNumberPrefix(),
     customer: {
       telephone: "",
       name: "",
@@ -371,10 +372,10 @@ export default function ProductsDashboard({ title }) {
                     <div className="card-body">
                       <Link to={"/Orders"}>
                         <Button onClick={
-                          ()=>{filterEmptyLayers(); addOrder({...tableValues, productList: {...productList}})}
+                          ()=>{filterEmptyLayers(); addReduxOrder({...tableValues, productList: {...productList}})}
                           }>Finalizar</Button>
                       </Link>
-                        <Button variant="success" onClick={()=>{filterEmptyLayers(); addOrder({...tableValues, productList: {...productList}})}}>Crear y modificar</Button>
+                        <Button variant="success" onClick={()=>{filterEmptyLayers(); addReduxOrder({...tableValues, productList: {...productList}})}}>Crear y modificar</Button>
                       <Link to="/">
                         <Button variant="danger">Cancelar</Button>
                       </Link>
@@ -391,3 +392,16 @@ export default function ProductsDashboard({ title }) {
     </div>
   );
 }
+
+const connectedNewOrdersDashboard = connect(state => ({state:state}), (dispatch)=>({
+  addReduxOrder: (order) => {
+    addOrder(order)
+    dispatch({
+      type:"ADD_ORDER",
+      lastOrderNumber: order.orderNumber
+    })
+    }
+
+  }))(NewOrderDashboard)
+
+export default connectedNewOrdersDashboard;
