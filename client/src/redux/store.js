@@ -44,10 +44,8 @@ function reducer(state = initialState, action) {
 
     switch (action.type) {
     case 'UPDATE_TABLEVALUES':
-        console.log(action.data)
-        return {
-            ...state
-          };
+        //console.log(action.data)
+        return [...action.data]
 
     default:
         return state;

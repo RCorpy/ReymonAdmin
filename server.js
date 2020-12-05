@@ -1,4 +1,5 @@
 const path = require('path')
+const cors = require('cors')
 const http = require('http')
 const express = require("express")
 const mongoose = require('mongoose')
@@ -20,7 +21,9 @@ const server = http.createServer(app)
 
 app.use(express.static(path.join(__dirname, 'client/build')))
 
-app.use(express.json());
+app.use(express.json({ limit: '50mb' }))
+app.use(cors())
+
 
 app.use(express.urlencoded({ extended: false }));
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -173,8 +176,23 @@ app.post('/modifyclient', async (req, res) => {
 
 
 app.post('/deleteorder', async (req, res) => {
-    let deleteEntry = await Order2020.findByIdAndDelete(req.body.id)
-    deleteEntry.delete()
+    let deleteEntry
+    switch(req.body.date){
+        case "2019":
+            deleteEntry = await Order2019.findByIdAndDelete(req.body.id)
+            deleteEntry.delete()
+        break
+        case "2020":
+            deleteEntry = await Order2020.findByIdAndDelete(req.body.id)
+            deleteEntry.delete()
+        break
+        case "2021":
+            deleteEntry = await Order2021.findByIdAndDelete(req.body.id)
+            deleteEntry.delete()
+        break
+        default:
+            console.log(req.body.date)
+}
 })
 
 app.post('/deleteproduct', async (req, res) => {

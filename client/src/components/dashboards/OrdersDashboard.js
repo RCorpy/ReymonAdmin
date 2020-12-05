@@ -51,10 +51,9 @@ const EXAMPLE_ORDER = {
 
 
 
-function OrdersDashboard({title, updateTableValues}) {
+function OrdersDashboard({title, updateTableValues, setTableValues, state}) {
 
   const [showMyAsideDiv, setShowMyAsideDiv]=useState(false)
-  const [tableValues, setTableValues] = useState([EXAMPLE_ORDER])
   const [toModifyValues, setToModifyValues] = useState(EXAMPLE_ORDER)
   const [statusFilter, setStatusFilter] = useState("all")
   const [filter, setFilter] = useState({completed: true, search: {type: "orderNumber", value: ""}})
@@ -63,10 +62,8 @@ function OrdersDashboard({title, updateTableValues}) {
 
 
   useEffect(()=>{
-    fetch(`${URL}orders/all`)
-    .then(res=>res.json())
-    .then(data=>setTableValues(data))
-  },[])
+    updateTableValues()
+  }, [])
 
   const getNextStatusFilter = () => {
     if(statusFilter=="all") return "proforma"
@@ -76,14 +73,14 @@ function OrdersDashboard({title, updateTableValues}) {
 
   const modifyOrder = (order, modifiedOrder) => {
     fetchModifyOrder(order, modifiedOrder)
-    setTableValues((prev)=>{
-      return prev.map((mappedOrder)=>{
+    setTableValues(
+      state.map((mappedOrder)=>{
         if(mappedOrder._id === order._id){
           return {...modifiedOrder}
         }
         else {return mappedOrder}
       })
-    })
+    )
   } 
 
   const getTotal = (order)=> {
@@ -105,14 +102,15 @@ function OrdersDashboard({title, updateTableValues}) {
   }
 
   const deleteOrder = (order) => {
+    console.log(order)
     fetchDeleteOrder(order)
-    setTableValues((prev)=>{
-      return prev.filter(toFilterOrder => toFilterOrder._id !== order._id)
-    })
+    setTableValues(state.filter(toFilterOrder => toFilterOrder._id !== order._id))
   } 
 
+  //useMemo? useCallback?
   const filterTableValues = () => {
-    let data = tableValues
+    let data = state
+    //console.log(state)
     if(filter){
       if(filter.completed){
         data = data.filter(order=>(!order.completed))
@@ -455,6 +453,12 @@ const connectedOrdersDashboard = connect(state => ({state:state}), (dispatch)=>(
       data: data
     }))
 
+  },
+  setTableValues: (data)=>{
+    dispatch({
+      type: 'UPDATE_TABLEVALUES',
+      data: data
+    })
   }
 }))(OrdersDashboard)
 

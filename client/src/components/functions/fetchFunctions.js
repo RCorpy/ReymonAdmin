@@ -74,14 +74,15 @@ const modifyOrder = (order, modifiedOrder) => {
   });
 };
 
-const deleteOrder = (order) => {
+const fetchDeleteOrder = (order) => {
   let url = "http://localhost:3000/deleteorder";
-
+  
   fetch(url, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       id: order._id,
+      date: order.orderDate.split("-")[0]
     }),
   }).then((result) => {
     // do something with the result
@@ -179,7 +180,7 @@ const fetchToExcel = (fileData)=>{
 
 module.exports = {
   fetchModifyOrder: modifyOrder,
-  fetchDeleteOrder: deleteOrder,
+  fetchDeleteOrder: fetchDeleteOrder,
   fetchModifyClient: fetchModifyClient,
   fetchDeleteClient: fetchDeleteClient,
   fetchModifyProduct: fetchModifyProduct,
