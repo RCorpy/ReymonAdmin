@@ -2,7 +2,7 @@
 
 const getDate = () =>{
     let newDate = new Date()
-    return `${newDate.getUTCFullYear()+1}-${newDate.getUTCMonth()+1}-${newDate.getUTCDate()+1}`
+    return `${newDate.getUTCFullYear()}-${newDate.getUTCMonth()+1}-${newDate.getUTCDate()}`
 }
 
 const getOrderNumberPrefix = () => {

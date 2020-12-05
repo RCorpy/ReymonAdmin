@@ -74,7 +74,7 @@ function OrdersDashboard({title, updateTableValues, setTableValues, state}) {
   const modifyOrder = (order, modifiedOrder) => {
     fetchModifyOrder(order, modifiedOrder)
     setTableValues(
-      state.map((mappedOrder)=>{
+      state.lastMonthOrders.map((mappedOrder)=>{
         if(mappedOrder._id === order._id){
           return {...modifiedOrder}
         }
@@ -104,18 +104,19 @@ function OrdersDashboard({title, updateTableValues, setTableValues, state}) {
   const deleteOrder = (order) => {
     console.log(order)
     fetchDeleteOrder(order)
-    setTableValues(state.filter(toFilterOrder => toFilterOrder._id !== order._id))
+    setTableValues(state.lastMonthOrders.filter(toFilterOrder => toFilterOrder._id !== order._id))
   } 
 
   //useMemo? useCallback?
   const filterTableValues = () => {
-    let data = state
+    let data = filter.search.value ? state.totalOrders : state.lastMonthOrders
     //console.log(state)
     if(filter){
       if(filter.completed){
         data = data.filter(order=>(!order.completed))
       }
       if(filter.search && filter.search.type){
+
         const searchType = filter.search.type
         const searchValue = filter.search.value.toLowerCase()
         switch(searchType){
@@ -235,7 +236,7 @@ function OrdersDashboard({title, updateTableValues, setTableValues, state}) {
                 <ButtonGroup aria-label="First group">
                   <Button variant={filter.completed ? "primary" : "secondary"} onClick={()=>setFilter(prev=>({...prev, completed: !prev.completed}))}>{filter.completed ? "Completed Hidden" : "Completed Shown"}</Button>
                   <Button style={{marginLeft: "5px", width: "130px"}}variant={statusFilter === "all" ? "primary" : statusFilter == "proforma" ? "secondary" : "info"} onClick={()=>setStatusFilter(getNextStatusFilter())}>{statusFilter === "all" ? "All" : statusFilter == "proforma" ? "Proformas" : "Presupuestos"}</Button>
-                  <Button onClick={()=>updateTableValues()}>Reload</Button>
+                  <Button style={{marginLeft: "5px"}} onClick={()=>updateTableValues()}>Reload</Button>
                 </ButtonGroup>
                 <ButtonGroup aria-label="First group">
                   <Button variant={filter.search.type==="date" ? "primary" : "secondary"} onClick={()=>setFilter(prev=>({...prev, search:{...prev.search, type: "date"}}))}>Date</Button>{' '}
@@ -244,7 +245,7 @@ function OrdersDashboard({title, updateTableValues, setTableValues, state}) {
                   <Button variant={filter.search.type==="orderNumber" ? "primary" : "secondary"} onClick={()=>setFilter(prev=>({...prev, search:{...prev.search, type: "orderNumber"}}))}>Order Nº</Button>
                 </ButtonGroup>
                 <InputGroup style={{width: "280px"}}>
-                  <InputGroup.Prepend > {/* MAKE THIS FIXED SIZE SO IT DOESNT WOBBLE */}
+                  <InputGroup.Prepend >
                     <InputGroup.Text id="btnGroupAddon2">{filter.search.type==="orderNumber" ? "Order Nº" : filter.search.type.charAt(0).toUpperCase() + filter.search.type.slice(1)}</InputGroup.Text>
                   </InputGroup.Prepend>
                   <FormControl
@@ -449,7 +450,7 @@ const connectedOrdersDashboard = connect(state => ({state:state}), (dispatch)=>(
     fetch(`${URL}orders/all`)
     .then(res=>res.json())
     .then(data=>dispatch({
-      type:'UPDATE_TABLEVALUES',
+      type:'GET_TABLEVALUES',
       data: data
     }))
 

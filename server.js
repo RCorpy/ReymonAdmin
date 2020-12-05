@@ -146,10 +146,7 @@ app.post('/newclient', async (req, res) => {
 //modify, hay que buscar como se hace
 
 app.post('/modifyorder', async (req, res) => {
-    console.log(req.body.data)
     let year = req.body.data.orderDate.split("-")[0]
-    console.log(year)
-
     if(year === "2019"){
         let modifyEntry = await Order2019.findByIdAndUpdate(req.body.id, req.body.data)
         res.send(modifyEntry)

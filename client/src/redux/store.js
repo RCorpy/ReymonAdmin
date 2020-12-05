@@ -1,42 +1,14 @@
   
 import {createStore} from 'redux';
+import {EXAMPLE_ORDER} from './exampleOrder'
+import {getDate} from '../components/functions/otherFunctions'
 
-const initialState = [{
-    _id: "qqewqyuweoq",
-    orderNumber: "01118601NN",
-    customer:{
-      telephone:"456798",
-      name: "Demo Customer",
-      postalCode: "46005",
-      address: "C/something",
-      city: "Valencia",
-      province: "Valencia",
-      country: "Spain",
-      contact: "Mr. Demo",
-      CIF: "03921841L",
-      email: "asdasd@fasd.com",
-    },
-    description: "",
-    status: "proforma",
-    extraNotes: "",
-    category: "Naves",
-    productList:{
-      imprimacion: { name: "a", color: "a", amount: "1", price: 1, kit: "a", juntas: true },
-      disolvente: { name: "b", color: "a", amount: "1", price: 1, kit: "a" },
-      layers: [
-        { name: "c", color: "c", amount: "3", price: 2, kit: "c" },
-        { name: "c", color: "c", amount: "3", price: 2, kit: "c" },
-      ],
-      noCharge: { name: "d", color: "o", amount: "2", price: 1, kit: "o" },
-      threeD: { name: "e", color: "o", amount: "2", price: 1, kit: "o" },
-    },
-    orderDate: "2020-10-21",
-    area: 200,
-    resinType: "Acrilica",
-    discount: 50,
-    completed: false,
-    dosManos: false
-  }]
+const MONTHS_TO_TRACEBACK = 6
+
+const initialState = {
+  lastMonthOrders: [EXAMPLE_ORDER],
+  totalOrders: [EXAMPLE_ORDER]
+}
 
     
 function reducer(state = initialState, action) {
@@ -45,7 +17,34 @@ function reducer(state = initialState, action) {
     switch (action.type) {
     case 'UPDATE_TABLEVALUES':
         //console.log(action.data)
-        return [...action.data]
+        return {
+          ...state,
+          lastMonthOrders:[...action.data]
+        }
+
+        case 'GET_TABLEVALUES':
+        let [maxYear, maxMonth, maxDay] = getDate().split("-").map(element => parseFloat(element))
+        if(maxMonth-MONTHS_TO_TRACEBACK<1){
+          maxYear = maxYear-1
+          maxMonth= 12+maxMonth-MONTHS_TO_TRACEBACK
+        }
+        else{
+          maxMonth = maxMonth - MONTHS_TO_TRACEBACK
+        }
+
+        const checkFilterDate = (orderDate) =>{
+          let [year, month, day] = orderDate.split("-").map(element => parseFloat(element))
+          if(year<maxYear){ return false}
+          if(year>maxYear){ return true}
+          if(month<maxMonth){ return false}
+          if(month>maxMonth){return true}
+          return day>=maxDay
+        }
+        console.log("maxYear", maxYear, "maxMonth", maxMonth, "maxDay", maxDay)
+          return {
+            lastMonthOrders:[...action.data.filter(order => (checkFilterDate(order.orderDate)))],
+            totalOrders: [...action.data]
+          }
 
     default:
         return state;
