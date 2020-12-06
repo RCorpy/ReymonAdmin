@@ -55,6 +55,15 @@ function reducer(state = initialState, action) {
         ...state,
         nextOrderNumber: prefix+suffix
       }
+
+    case 'DELETE_ORDER':
+      return{
+        ...state,
+        lastMonthOrders: state.lastMonthOrders.filter(order=>order._id!==action.data),
+        totalOrders: state.totalOrders.filter(order=>order._id!==action.data) 
+      }  
+    
+
     default:
         return state;
     }

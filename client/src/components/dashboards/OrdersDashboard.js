@@ -7,13 +7,16 @@ import {Button, InputGroup, ButtonToolbar, FormControl} from 'react-bootstrap';
 import {connect} from 'react-redux'
 import {EXAMPLE_ORDER} from '../../redux/exampleOrder'
 import {productArray} from '../../redux/productArray'
+import Modal from '../Modal'
 
 const URL = process.env.URL || 'http://localhost:3000/'
 const validate = new Validator()
 
 
-function OrdersDashboard({title, updateTableValues, setTableValues, state}) {
+function OrdersDashboard({title, updateTableValues, setTableValues,reduxDelete, state}) {
 
+  const [showModal, setShowModal] = useState(false)
+  const [modalProps, setModalProps] = useState({acceptFunction:()=>console.log("works") , title: "My Modal", category: "confirm", body: "modal body"})
   const [showMyAsideDiv, setShowMyAsideDiv]=useState(false)
   const [toModifyValues, setToModifyValues] = useState(EXAMPLE_ORDER)
   const [statusFilter, setStatusFilter] = useState("all")
@@ -25,6 +28,11 @@ function OrdersDashboard({title, updateTableValues, setTableValues, state}) {
   useEffect(()=>{
     updateTableValues()
   }, [])
+
+  const activateModal = (modalProps) =>{
+    setShowModal(true)
+    setModalProps(modalProps)
+  }
 
   const getNextStatusFilter = () => {
     if(statusFilter=="all") return "proforma"
@@ -63,9 +71,7 @@ function OrdersDashboard({title, updateTableValues, setTableValues, state}) {
   }
 
   const deleteOrder = (order) => {
-    console.log(order)
-    fetchDeleteOrder(order)
-    setTableValues(state.lastMonthOrders.filter(toFilterOrder => toFilterOrder._id !== order._id))
+    activateModal({acceptFunction:()=>{fetchDeleteOrder(order); reduxDelete(order)}, title: "Deleting...", category: "confirm", body: `Are you sure you want to delete ${order.orderNumber}`})
   } 
 
   //useMemo? useCallback?
@@ -197,7 +203,7 @@ function OrdersDashboard({title, updateTableValues, setTableValues, state}) {
                 <ButtonGroup aria-label="First group">
                   <Button variant={filter.completed ? "primary" : "secondary"} onClick={()=>setFilter(prev=>({...prev, completed: !prev.completed}))}>{filter.completed ? "Completed Hidden" : "Completed Shown"}</Button>
                   <Button style={{marginLeft: "5px", width: "130px"}}variant={statusFilter === "all" ? "primary" : statusFilter == "proforma" ? "secondary" : "info"} onClick={()=>setStatusFilter(getNextStatusFilter())}>{statusFilter === "all" ? "All" : statusFilter == "proforma" ? "Proformas" : "Presupuestos"}</Button>
-                  <Button style={{marginLeft: "5px"}} onClick={()=>updateTableValues()}>Reload</Button>
+                  <Button style={{marginLeft: "5px"}} onClick={()=>activateModal({acceptFunction: updateTableValues, title: "Reload", body: "Do you want to reload?", category: "confirm"})}>Reload</Button>  {/*TOAST THIS BETTER THAN MODAL*/}
                 </ButtonGroup>
                 <ButtonGroup aria-label="First group">
                   <Button variant={filter.search.type==="date" ? "primary" : "secondary"} onClick={()=>setFilter(prev=>({...prev, search:{...prev.search, type: "date"}}))}>Date</Button>{' '}
@@ -393,15 +399,22 @@ function OrdersDashboard({title, updateTableValues, setTableValues, state}) {
             <input type="number" value={getTotal(toModifyValues)} />
           </div>
           <div className="form-group dashboardformgroup">
-            <button className="btn btn-primary" type="submit">Save</button>
-            <button className="btn btn-secondary" type="button" onClick={()=>setShowMyAsideDiv(false)}>Close</button>
-            <button className="btn btn-info" type="button" onClick={()=>fetchToExcel(toModifyValues)}>Excel</button>
+            <button className="btn btn-primary" type="submit">Save</button> {/*TOAST THIS*/}
+            <button className="btn btn-secondary" type="button" onClick={()=>setShowMyAsideDiv(false)}>Close</button> {/*MODAL THIS*/}
+            <button className="btn btn-info" type="button" onClick={()=>fetchToExcel(toModifyValues)}>Excel</button>  {/*TOAST THIS*/}
           </div>
           </form>
         </div>
       </div>
       {/* /.content */}
-      
+      <Modal
+        show={showModal}
+        onHide={() => setShowModal(false)}
+        acceptfunction={()=>modalProps.acceptFunction()}
+        title={modalProps.title}
+        category={modalProps.category}
+        body={modalProps.body}
+      />
     </div>
   );
 }
@@ -420,6 +433,12 @@ const connectedOrdersDashboard = connect(state => ({state:state}), (dispatch)=>(
     dispatch({
       type: 'UPDATE_TABLEVALUES',
       data: data
+    })
+  },
+  reduxDelete:(order)=>{
+    dispatch({
+      type: 'DELETE_ORDER',
+      data: order._id
     })
   }
 }))(OrdersDashboard)
