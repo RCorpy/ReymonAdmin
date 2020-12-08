@@ -8,6 +8,7 @@ import {connect} from 'react-redux'
 import {EXAMPLE_ORDER} from '../../redux/exampleOrder'
 import {productArray} from '../../redux/productArray'
 import Modal from '../Modal'
+import Toasts from '../Toast'
 
 const URL = process.env.URL || 'http://localhost:3000/'
 const validate = new Validator()
@@ -21,6 +22,7 @@ function OrdersDashboard({title, updateTableValues, setTableValues,reduxDelete, 
   const [toModifyValues, setToModifyValues] = useState(EXAMPLE_ORDER)
   const [statusFilter, setStatusFilter] = useState("all")
   const [filter, setFilter] = useState({completed: true, search: {type: "orderNumber", value: ""}})
+  const [toastArray, setToastArray] =useState([])
 
   const myAsideDivStyle = showMyAsideDiv ? {display: "inline"} :  {display: "none"}
 
@@ -170,6 +172,19 @@ function OrdersDashboard({title, updateTableValues, setTableValues,reduxDelete, 
     e.persist();
 
     setFilter((prev) => ({...prev, search: {type: prev.search.type, value: e.target.value}}))
+  }
+
+  const createToast = ()=>{
+    let newToast = {
+      title: "yes",
+      body:"body",
+      time: new Date().toISOString()
+    }
+    setToastArray((prev)=>([...prev, newToast]))
+  }
+
+  const onDissmiss = (time) =>{
+    setToastArray(toastArray.filter(element=>(element.time!==time)))
   }
 
   return (
@@ -415,6 +430,8 @@ function OrdersDashboard({title, updateTableValues, setTableValues,reduxDelete, 
         category={modalProps.category}
         body={modalProps.body}
       />
+      <Toasts toastArray={toastArray} onDissmiss={onDissmiss}/>
+      <button onClick={()=>createToast()}>toast</button>
     </div>
   );
 }
