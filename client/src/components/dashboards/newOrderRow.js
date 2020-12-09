@@ -8,7 +8,6 @@ export default function newOrderRow({ items, changeFunction }) {
         return toReturn
     }
 
-  if (items.length) {
     return items.map((element, index) => (
       <>
         <input className="col-md-2" value={element.name} onChange={(e)=>changeFunction(arrayChange(index, {...element, name: e.target.value}))} />
@@ -19,16 +18,5 @@ export default function newOrderRow({ items, changeFunction }) {
         <div className="col-md-2">{element.price*element.amount}</div>
       </>
     ));
-  } else {
-    return (
-      <>
-        <input className="col-md-2" value={items.name} onChange={(e)=>changeFunction({...items, name: e.target.value})}/>
-        <input className="col-md-2" value={items.color} onChange={(e)=>changeFunction({...items, color: e.target.value})}/>
-        <input className="col-md-2" value={items.amount} onChange={(e)=>changeFunction({...items, amount: e.target.value})}/>
-        <input className="col-md-2" value={items.price} onChange={(e)=>changeFunction({...items, price: e.target.value})}/>
-        <input className="col-md-2" value={items.kit} onChange={(e)=>changeFunction({...items, kit: e.target.value})}/>
-        <div className="col-md-2">{items.price*items.amount}</div>
-      </>
-    );
-  }
+
 }

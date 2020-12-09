@@ -5,12 +5,13 @@ import {productArray} from '../redux/productArray'
 
 export default function MyModal(props) {
     
-    const [value, setValue] = useState("")
+    const [value, setValue] = useState("imprimacion")
     const category= props.category
 
     // props => acceptFunction, title, body, category, defaultValue
-    const acceptAndClose = (value)=>{
-        props.acceptfunction()
+    const acceptAndClose = ()=>{
+      console.log("finalValue", value, props.acceptfunction)
+        props.acceptfunction(value)
         props.onHide()
     }
 
@@ -46,7 +47,7 @@ export default function MyModal(props) {
         </Modal.Body>
         <Modal.Footer>
           <Button variant="danger" onClick={props.onHide}>Cancel</Button>
-          {props.acceptfunction ? <Button variant="success" onClick={()=>acceptAndClose(value)}>Accept</Button> : <>hi</>}
+          {props.acceptfunction ? <Button variant="success" onClick={()=>acceptAndClose()}>Accept</Button> : <>hi</>}
         </Modal.Footer>
       </Modal>
     );

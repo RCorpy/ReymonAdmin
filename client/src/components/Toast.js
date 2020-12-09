@@ -10,7 +10,7 @@ export default function Toasts({ toastArray, onDissmiss }) {
         position: "fixed",
         top: 30,
         right: 30,
-        minHeight: "200px",
+        
         zIndex: 9999
       }}
     >

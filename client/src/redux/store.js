@@ -43,7 +43,7 @@ function reducer(state = initialState, action) {
         }
           return {
             ...state,
-            lastMonthOrders:[...action.data.filter(order => (checkFilterDate(order.orderDate)))],
+            lastMonthOrders:[...action.data.filter(order => (checkFilterDate(order.orderDate)))].reverse(),
             totalOrders: [...action.data]
           }
     

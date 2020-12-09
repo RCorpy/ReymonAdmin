@@ -7,10 +7,17 @@ import {Link} from 'react-router-dom'
 import {addOrder} from "../functions/fetchFunctions";
 import {getDate, getOrderNumberPrefix} from "../functions/otherFunctions"
 import {connect} from 'react-redux'
+import {productArray} from '../../redux/productArray'
+import Modal from '../Modal'
+
 
 const URL = process.env.URL || "http://localhost:3000/";
 
 function NewOrderDashboard({ title , addReduxOrder, state}) {
+
+  const [showModal, setShowModal] = useState(false)
+  const [modalProps, setModalProps] = useState({acceptFunction:()=>console.log("works") , title: "My Modal", category: "confirm", body: "modal body"})
+ 
   const [tableValues, setTableValues] = useState({
     orderNumber: state.nextOrderNumber ? state.nextOrderNumber : getOrderNumberPrefix(),
     customer: {
@@ -38,17 +45,30 @@ function NewOrderDashboard({ title , addReduxOrder, state}) {
   });
 
   const [productList, setProductList] = useState({
-    imprimacion: { name: "", color: "", amount: 0, price: 1, kit: "", juntas: true },
-    disolvente: { name: "", color: "", amount: 0, price: 1, kit: "" },
+    imprimacion: [],
+    disolvente: [],
     layers: [
       { name: "", color: "", amount: 0, price: 1, kit: "" },
     ],
-    noCharge: { name: "", color: "", amount: 0, price: 1, kit: "" },
-    threeD: { name: "", color: "", amount: 0, price: 1, kit: "" },
+    noCharge: [],
+    threeD: [],
   });
 
-  const addOneLayer = ()=>{
-    setProductList((prev)=>({...prev, layers: [...prev.layers, { name: "", color: "", amount: 0, price: 1, kit: "" }]}))
+  const activateModal = (modalProps) =>{
+    setShowModal(true)
+    setModalProps(modalProps)
+  }
+
+  const addOneLayer = (productType)=>{
+    console.log(productType)
+    setProductList((prev)=>
+      {
+        let newProductList = {...prev}
+        console.log(newProductList, productType)
+        newProductList[productType] = [...prev[productType], { name: "", color: "", amount: 0, price: 1, kit: "" }]
+        return newProductList
+      }
+      )
   }
 
   const searchPrices = ()=>{
@@ -59,22 +79,27 @@ function NewOrderDashboard({ title , addReduxOrder, state}) {
     
   }
 
-  const filterEmptyLayers = () => {
-    let filteredLayers = productList.layers
+  const filterEmptyLayers = (productType) => {
+    let filteredLayers = productList[productType]
     filteredLayers = filteredLayers.filter(layer => (layer.amount>0))
-    if(filteredLayers.length>0){
-      setProductList((prev)=>({...prev, layers: filteredLayers}))
-    }
-    else{
-      setProductList((prev)=>({...prev, layers: [{ name: "", color: "", amount: 0, price: 1, kit: "" }]}))
-    }
+    setProductList((prev)=>      {
+      let newProductList = {...prev}
+      newProductList[productType] = filteredLayers
+      return newProductList
+    })
+  }
+
+  const filterAllEmptyLayers = () => {
+    productArray.map(element=>{filterEmptyLayers(element)})
   }
 
   const calcTotal = () => {
     let totalProductList = {...productList}
-    let layersTotal = totalProductList.layers.reduce((accumulator, layer)=>(accumulator+(layer.amount*layer.price)), 0)
-    let othersTotal =  ["imprimacion", "disolvente", "noCharge", "threeD"].reduce((accumulator, listPart)=>(accumulator+(totalProductList[listPart].price*totalProductList[listPart].amount)),0)
-    return othersTotal + layersTotal
+
+    //cambiar "layers" por product
+    const layerTotal = (product) => (totalProductList["layers"].reduce((accumulator, layer)=>(accumulator+(layer.amount*layer.price)), 0))
+
+    return productArray.reduce((accu, product)=>(accu+layerTotal(product))) || -1
   }
 
   const modifyProductList = (objectKey, value) => {
@@ -311,6 +336,9 @@ function NewOrderDashboard({ title , addReduxOrder, state}) {
                     </div>
                     <div className="card-body">
                       <div className="row">
+                        <Button onClick={()=>activateModal({acceptFunction:(layer)=>{addOneLayer(layer)}, title: "Add one layer", category: "select product layer", body: `What type?`})}>New Product</Button>
+                      </div>
+                      <div className="row">
                         <div className="col-md-2">Name</div>
                         <div className="col-md-2">Color</div>{" "}
                         <div className="col-md-2">Amount</div>{" "}
@@ -318,64 +346,33 @@ function NewOrderDashboard({ title , addReduxOrder, state}) {
                         <div className="col-md-2">Kit</div>
                         <div className="col-md-2">Total</div>
                       </div>
-                      <div className="row">
-                        <div className="col-md-12">
-                          <span>Imprimación</span>
-                        </div>
-                        <NewOrderRow
-                          items={productList.imprimacion}
-                          changeFunction={(v)=>{modifyProductList("imprimacion", v)}}
-                        />
-                      </div>
-                      <div className="row">
-                        <div className="col-md-12">
-                          <span>Capas</span>
-                          <button onClick={addOneLayer}><i class="fas fa-folder-plus"></i></button>
-                          <button onClick={searchPrices}><i class="fas fa-search"></i></button>
-                          <button onClick={filterEmptyLayers}><i class="fas fa-filter"></i></button>
-                        </div>
-                        <NewOrderRow
-                          items={productList.layers}
-                          changeFunction={(v)=>{modifyProductList("layers", v)}}
-                        />
-                      </div>
-                      <div className="row">
-                        <div className="col-md-12">
-                          <span>Disolvente</span>
-                        </div>
-                        <NewOrderRow
-                          items={productList.disolvente}
-                          changeFunction={(v)=>{modifyProductList("disolvente", v)}}
-                        />
-
-                      </div>
-                      <div className="row">
-                        <div className="col-md-12">
-                          <span>Sin Cargo</span>
-                        </div>
-                        <NewOrderRow
-                          items={productList.noCharge}
-                          changeFunction={(v)=>{modifyProductList("noCharge", v)}}
-                        />
-                      </div>
-                      <div className="row">
-                        <div className="col-md-12">
-                          <span>3D</span>
-                        </div>
-                        <NewOrderRow
-                          items={productList.threeD}
-                          changeFunction={(v)=>{modifyProductList("threeD", v)}}
-                        />
-                      </div>
+                      {productArray.map(layer=>{
+                        if(productList[layer].length>0){
+                          return (
+                            <div className="row">
+                              <div className="col-md-12">
+                                <span>{layer}</span>
+                                <button onClick={searchPrices}><i class="fas fa-search"></i></button>
+                                <button onClick={()=>filterEmptyLayers(layer)}><i class="fas fa-filter"></i></button>
+                              </div>
+                              <NewOrderRow
+                                items={productList[layer]}
+                                changeFunction={(v)=>{modifyProductList(layer, v)}}
+                              />
+                            </div>
+                          )
+                        }
+                        })}
+                      
                             <div>Total: {calcTotal()}</div>
                     </div>
                     <div className="card-body">
                       <Link to={"/Orders"}>
                         <Button onClick={
-                          ()=>{filterEmptyLayers(); addReduxOrder({...tableValues, productList: {...productList}})}
+                          ()=>{filterAllEmptyLayers(); addReduxOrder({...tableValues, productList: {...productList}})}
                           }>Finalizar</Button>
                       </Link>
-                        <Button variant="success" onClick={()=>{filterEmptyLayers(); addReduxOrder({...tableValues, productList: {...productList}})}}>Crear y modificar</Button>
+                        <Button variant="success" onClick={()=>{filterAllEmptyLayers(); addReduxOrder({...tableValues, productList: {...productList}})}}>Crear y modificar</Button>
                       <Link to="/">
                         <Button variant="danger">Cancelar</Button>
                       </Link>
@@ -389,6 +386,14 @@ function NewOrderDashboard({ title , addReduxOrder, state}) {
         {/* /.container-fluid */}
       </div>
       {/* /.content */}
+      <Modal
+        show={showModal}
+        onHide={() => setShowModal(false)}
+        acceptfunction={(value)=>modalProps.acceptFunction(value)}
+        title={modalProps.title}
+        category={modalProps.category}
+        body={modalProps.body}
+      />
     </div>
   );
 }
