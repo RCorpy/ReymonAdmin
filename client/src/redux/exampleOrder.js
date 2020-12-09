@@ -18,14 +18,14 @@ export const EXAMPLE_ORDER = {
     extraNotes: "",
     category: "Naves",
     productList:{
-      imprimacion: { name: "a", color: "a", amount: "1", price: 1, kit: "a", juntas: true },
-      disolvente: { name: "b", color: "a", amount: "1", price: 1, kit: "a" },
+      imprimacion: [{ name: "a", color: "a", amount: "1", price: 1, kit: "a", juntas: true }],
+      disolvente: [{ name: "b", color: "a", amount: "1", price: 1, kit: "a" }],
       layers: [
         { name: "c", color: "c", amount: "3", price: 2, kit: "c" },
         { name: "c", color: "c", amount: "3", price: 2, kit: "c" },
       ],
-      noCharge: { name: "d", color: "o", amount: "2", price: 1, kit: "o" },
-      threeD: { name: "e", color: "o", amount: "2", price: 1, kit: "o" },
+      noCharge: [{ name: "d", color: "o", amount: "2", price: 1, kit: "o" }],
+      threeD: [],
     },
     orderDate: "2020-10-21",
     area: 200,

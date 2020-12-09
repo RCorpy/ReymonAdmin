@@ -58,20 +58,21 @@ function OrdersDashboard({title, updateTableValues, setTableValues,reduxDelete, 
     
     
     return productArray.reduce((accumulator, product)=>{
-      if(product !=="layers"){
-        
-        return accumulator+(order.productList[product].price*order.productList[product].amount)
-      }
-      else{
-        return accumulator + (order.productList.layers.reduce((acc, layerProduct)=>(acc+layerProduct.price*layerProduct.amount),0)) //temporary
-      }
+
+
+        return accumulator + (order.productList[product].reduce((acc, layerProduct)=>(acc+layerProduct.price*layerProduct.amount),0)) //temporary
+ 
     } , 0)
   }
 
-  const makeNewProduct = () => {
-    setToModifyValues(prev=>({...prev, productList: {...prev.productList, layers: [...prev.productList.layers, { name: "yeah baby", color: "c", amount: "3", price: 2, kit: "c" }] }}))
+  const makeNewProduct = (product) => {
+    setToModifyValues(prev=>{
+      let newValues = {...prev}
+      newValues[product] = [...prev[product], { name: "yeah baby", color: "c", amount: "3", price: 2, kit: "c" }] 
+      return newValues
+    })
   }
-
+//me quede aqui
   const deleteOrder = (order) => {
     activateModal({acceptFunction:()=>{fetchDeleteOrder(order); reduxDelete(order)}, title: "Deleting...", category: "confirm", body: `Are you sure you want to delete ${order.orderNumber}`})
   } 
