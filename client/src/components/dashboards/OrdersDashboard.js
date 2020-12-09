@@ -129,7 +129,7 @@ function OrdersDashboard({title, updateTableValues, setTableValues,reduxDelete, 
             <td onClick={normalTableClick}>{order.discount}%</td>
             <td onClick={normalTableClick}>{getTotal(order)}</td>
             <td onClick={normalTableClick}>{order.extraNotes ? "yes" : "no"}</td>
-            <td onClick={()=>{modifyOrder(order, {...order, completed: !order.completed})}}>{order.completed ? "true": "false"}</td>
+            <td onClick={()=>{modifyOrder(order, {...order, completed: !order.completed}); createToast(order.completed ? "Order incomplete" : "Order complete", order.customer.name ? `${order.customer.name} order modified`:`Order ${order.orderNumber} modified`)}}>{order.completed ? "true": "false"}</td>
             <td><div style={{display:"flex", justifyContent:"center"}} onClick={()=>deleteOrder(order)}><i class="fas fa-trash-alt"></i></div></td> {/*changed deleteOrder(order) to setShow*/}
           </tr>)
     })
@@ -174,10 +174,10 @@ function OrdersDashboard({title, updateTableValues, setTableValues,reduxDelete, 
     setFilter((prev) => ({...prev, search: {type: prev.search.type, value: e.target.value}}))
   }
 
-  const createToast = ()=>{
+  const createToast = (title, body)=>{
     let newToast = {
-      title: "yes",
-      body:"body",
+      title: title,
+      body:body,
       time: new Date().getTime()
     }
     setToastArray((prev)=>([...prev, newToast]))
@@ -218,7 +218,7 @@ function OrdersDashboard({title, updateTableValues, setTableValues,reduxDelete, 
                 <ButtonGroup aria-label="First group">
                   <Button variant={filter.completed ? "primary" : "secondary"} onClick={()=>setFilter(prev=>({...prev, completed: !prev.completed}))}>{filter.completed ? "Completed Hidden" : "Completed Shown"}</Button>
                   <Button style={{marginLeft: "5px", width: "130px"}}variant={statusFilter === "all" ? "primary" : statusFilter == "proforma" ? "secondary" : "info"} onClick={()=>setStatusFilter(getNextStatusFilter())}>{statusFilter === "all" ? "All" : statusFilter == "proforma" ? "Proformas" : "Presupuestos"}</Button>
-                  <Button style={{marginLeft: "5px"}} onClick={()=>activateModal({acceptFunction: updateTableValues, title: "Reload", body: "Do you want to reload?", category: "confirm"})}>Reload</Button>  {/*TOAST THIS BETTER THAN MODAL*/}
+                  <Button style={{marginLeft: "5px"}} onClick={()=>{updateTableValues(); createToast("Reloaded","Table values were updated")}}>Reload</Button>  {/*TOAST THIS BETTER THAN MODAL*/}
                 </ButtonGroup>
                 <ButtonGroup aria-label="First group">
                   <Button variant={filter.search.type==="date" ? "primary" : "secondary"} onClick={()=>setFilter(prev=>({...prev, search:{...prev.search, type: "date"}}))}>Date</Button>{' '}
@@ -414,9 +414,9 @@ function OrdersDashboard({title, updateTableValues, setTableValues,reduxDelete, 
             <input type="number" value={getTotal(toModifyValues)} />
           </div>
           <div className="form-group dashboardformgroup">
-            <button className="btn btn-primary" type="submit">Save</button> {/*TOAST THIS*/}
+            <button className="btn btn-primary" type="submit" onClick={()=>{createToast("Saved", "Changes were saved to DB")}}>Save</button> {/*TOAST THIS*/}
             <button className="btn btn-secondary" type="button" onClick={()=>setShowMyAsideDiv(false)}>Close</button> {/*MODAL THIS*/}
-            <button className="btn btn-info" type="button" onClick={()=>fetchToExcel(toModifyValues)}>Excel</button>  {/*TOAST THIS*/}
+            <button className="btn btn-info" type="button" onClick={()=>{fetchToExcel(toModifyValues); createToast("In progress", "Creating excel file")}}>Excel</button>  {/*TOAST THIS*/}
           </div>
           </form>
         </div>
@@ -431,7 +431,6 @@ function OrdersDashboard({title, updateTableValues, setTableValues,reduxDelete, 
         body={modalProps.body}
       />
       <Toasts toastArray={toastArray} onDissmiss={onDissmiss}/>
-      <button onClick={()=>createToast()}>toast</button>
     </div>
   );
 }
@@ -461,12 +460,3 @@ const connectedOrdersDashboard = connect(state => ({state:state}), (dispatch)=>(
 }))(OrdersDashboard)
 
 export default connectedOrdersDashboard;
-
-/*
-const connectedOrdersDashboard = connect(state => ({state:state}), (dispatch)=>({
-  updateTableValues: (movie) => dispatch({
-      type:'UPDATE_MODAL',
-      movie: movie
-  })
-}))(OrdersDashboard)
-*/
