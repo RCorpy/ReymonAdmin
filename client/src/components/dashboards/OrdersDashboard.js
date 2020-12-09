@@ -178,13 +178,13 @@ function OrdersDashboard({title, updateTableValues, setTableValues,reduxDelete, 
     let newToast = {
       title: "yes",
       body:"body",
-      time: new Date().toISOString()
+      time: new Date().getTime()
     }
     setToastArray((prev)=>([...prev, newToast]))
   }
 
   const onDissmiss = (time) =>{
-    setToastArray(toastArray.filter(element=>(element.time!==time)))
+    setToastArray(prev => prev.filter(element=>(element.time!==time)))
   }
 
   return (

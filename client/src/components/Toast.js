@@ -3,14 +3,6 @@ import IndividualToast from './IndividualToast'
 
 export default function Toasts({ toastArray, onDissmiss }) {
 
-    useEffect(() => {
-if(toastArray.length>0){        toastArray[-1].timer = setTimeout(() => {
-            console.log(toastArray[-1].time)
-          onDissmiss(toastArray[-1].time)
-        }, 3000);
-        return () => clearTimeout(toastArray[-1].timer);}
-      }, [toastArray]);
-
 
   return (
     <div
@@ -31,7 +23,7 @@ if(toastArray.length>0){        toastArray[-1].timer = setTimeout(() => {
       >
         {
           toastArray.map(element=>
-          <IndividualToast toastObject={element} onDissmiss={onDissmiss}/>
+            <IndividualToast key={element.time} toastObject={element} onDissmiss={onDissmiss}/>
           )
         }
       </div>

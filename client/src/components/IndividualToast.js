@@ -5,6 +5,13 @@ import {Toast} from 'react-bootstrap';
 export default function IndividualToast({toastObject, onDissmiss}) {
 
 
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            onDissmiss(toastObject.time)
+            }, 3000);
+                return () => clearTimeout(timer);
+              }, []);
+        
       
     return (
         <div>
