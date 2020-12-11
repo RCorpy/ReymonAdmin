@@ -159,6 +159,7 @@ function OrdersDashboard({title, updateTableValues, setTableValues,reduxDelete, 
 
   const getMyNewProductListLayers = (product, index, value, key) => {
     let previousProductListLayerArray = toModifyValues.productList
+    console.log(previousProductListLayerArray, product)
     previousProductListLayerArray[product][index][key] = value
     return previousProductListLayerArray
   }
@@ -372,6 +373,7 @@ function OrdersDashboard({title, updateTableValues, setTableValues,reduxDelete, 
                       {productArray.map((product)=>{
                         return(
                             <>
+                              {toModifyValues.productList[product].length>0 ? <td>{product}</td>: <></>}
                               {toModifyValues.productList[product].map((layer, index)=>(
                               <tr>
                                 <td><input type="text" onChange={(e)=>setToModifyValues({...toModifyValues ,productList: getMyNewProductListLayers(product, index, e.target.value, "name")})} value={toModifyValues.productList[product][index].name} /></td>
