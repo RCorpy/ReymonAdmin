@@ -68,7 +68,7 @@ function OrdersDashboard({title, updateTableValues, setTableValues,reduxDelete, 
   const makeNewProduct = (product) => {
     setToModifyValues(prev=>{
       let newValues = {...prev}
-      newValues[product] = [...prev[product], { name: "yeah baby", color: "c", amount: "3", price: 2, kit: "c" }] 
+      newValues[product] = [...prev[product], { name: "", color: "", amount: 0, price: 1, kit: "" }] 
       return newValues
     })
   }
@@ -156,22 +156,14 @@ function OrdersDashboard({title, updateTableValues, setTableValues,reduxDelete, 
     }
   }
 
-  const getMyNewProductList = (product, value, key) => {
-    let previousProductArray = toModifyValues.productList
-    previousProductArray[product][key] = value
-    
-    return previousProductArray
-  }
-
-  const getMyNewProductListLayers = ( index, value, key) => {
+  const getMyNewProductListLayers = (product, index, value, key) => {
     let previousProductListLayerArray = toModifyValues.productList
-    previousProductListLayerArray.layers[index][key] = value
+    previousProductListLayerArray[product][index][key] = value
     return previousProductListLayerArray
   }
 
   const changeSearchValue = (e) => {
     e.persist();
-
     setFilter((prev) => ({...prev, search: {type: prev.search.type, value: e.target.value}}))
   }
 
@@ -377,29 +369,20 @@ function OrdersDashboard({title, updateTableValues, setTableValues,reduxDelete, 
                     <tbody>
                       {/* SI ES "LAYERS" es un array y hay que hacerle otro map */}
                       {productArray.map((product)=>{
-                        if (product !== "layers"){ return (
-                          <tr>
-                            <td><input type="text" onChange={(e)=>setToModifyValues({...toModifyValues ,productList: getMyNewProductList(product, e.target.value, "name")})} value={toModifyValues.productList[product].name} /></td>
-                            <td><input type="text" onChange={(e)=>setToModifyValues({...toModifyValues ,productList: getMyNewProductList(product, e.target.value, "color")})} value={toModifyValues.productList[product].color}/></td>
-                            <td><input type="text" onChange={(e)=>setToModifyValues({...toModifyValues ,productList: getMyNewProductList(product, e.target.value, "amount")})} value={toModifyValues.productList[product].amount} /></td>
-                            <td><input type="text" onChange={(e)=>setToModifyValues({...toModifyValues ,productList: getMyNewProductList(product, e.target.value, "price")})} value={toModifyValues.productList[product].price} /></td>
-                            <td><input type="text" onChange={(e)=>setToModifyValues({...toModifyValues ,productList: getMyNewProductList(product, e.target.value, "kit")})} value={toModifyValues.productList[product].kit} /></td>
-                          </tr>)}
-                        else{
-                          return(
+                        return(
                             <>
-                              {toModifyValues.productList.layers.map((layer, index)=>(
+                              {toModifyValues.productList[product].map((layer, index)=>(
                               <tr>
-                                <td><input type="text" onChange={(e)=>setToModifyValues({...toModifyValues ,productList: getMyNewProductListLayers(index, e.target.value, "name")})} value={toModifyValues.productList.layers[index].name} /></td>
-                                <td><input type="text" onChange={(e)=>setToModifyValues({...toModifyValues ,productList: getMyNewProductListLayers(index, e.target.value, "color")})} value={toModifyValues.productList.layers[index].color}/></td>
-                                <td><input type="text" onChange={(e)=>setToModifyValues({...toModifyValues ,productList: getMyNewProductListLayers(index, e.target.value, "amount")})} value={toModifyValues.productList.layers[index].amount} /></td>
-                                <td><input type="text" onChange={(e)=>setToModifyValues({...toModifyValues ,productList: getMyNewProductListLayers(index, e.target.value, "price")})} value={toModifyValues.productList.layers[index].price} /></td>
-                                <td><input type="text" onChange={(e)=>setToModifyValues({...toModifyValues ,productList: getMyNewProductListLayers(index, e.target.value, "kit")})} value={toModifyValues.productList.layers[index].kit} /></td>
+                                <td><input type="text" onChange={(e)=>setToModifyValues({...toModifyValues ,productList: getMyNewProductListLayers(product, index, e.target.value, "name")})} value={toModifyValues.productList[product][index].name} /></td>
+                                <td><input type="text" onChange={(e)=>setToModifyValues({...toModifyValues ,productList: getMyNewProductListLayers(product, index, e.target.value, "color")})} value={toModifyValues.productList[product][index].color}/></td>
+                                <td><input type="text" onChange={(e)=>setToModifyValues({...toModifyValues ,productList: getMyNewProductListLayers(product, index, e.target.value, "amount")})} value={toModifyValues.productList[product][index].amount} /></td>
+                                <td><input type="text" onChange={(e)=>setToModifyValues({...toModifyValues ,productList: getMyNewProductListLayers(product, index, e.target.value, "price")})} value={toModifyValues.productList[product][index].price} /></td>
+                                <td><input type="text" onChange={(e)=>setToModifyValues({...toModifyValues ,productList: getMyNewProductListLayers(product, index, e.target.value, "kit")})} value={toModifyValues.productList[product][index].kit} /></td>
                               </tr>
                               ))}
                             </>
                           )
-                        }
+                        
                         })}
                     </tbody>
             </Table>
