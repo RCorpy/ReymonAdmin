@@ -213,11 +213,11 @@ const getLayerWeight = (layer) => {return (parseFloat(layer.kit.split(" ")) || 0
 
 const getTotalWeight = (productList) => {
     return (
-        getLayerWeight(productList.imprimacion)+
-        getLayerWeight(productList.disolvente)+
-        getLayerWeight(productList.noCharge)+
-        getLayerWeight(productList.threeD)+
-        productList.layers.reduce((accumulator, element)=>{return accumulator+getLayerWeight(element)},0)
+        productList.imprimacion.reduce((accumulator, element)=>{return accumulator+getLayerWeight(element)},0)+
+        productList.noCharge.reduce((accumulator, element)=>{return accumulator+getLayerWeight(element)},0)+
+        productList.layers.reduce((accumulator, element)=>{return accumulator+getLayerWeight(element)},0)+
+        productList.threeD.reduce((accumulator, element)=>{return accumulator+getLayerWeight(element)},0)+
+        productList.disolvente.reduce((accumulator, element)=>{return accumulator+getLayerWeight(element)},0)
         )
 }
 
@@ -264,16 +264,17 @@ app.post('/toexcel', async (req, res)=>{
             cellRow = cellRow+1
         }
         const productList = data.productList
-        const getAmount = (product) => {return parseFloat(productList[product].amount)}
+        const getAmount = (product) => {return parseFloat(productList[product].length)}
         
         const getHarinaDeCuarzoInfo = () => { return [0, "KGS 25"] } // to improve
 
         if(getAmount("imprimacion")>0){
-            let title = productList.imprimacion.juntas ? "IMPRIMACIÓN Y JUNTAS" : "IMPRIMACIÓN"
+            //to improve title
+            let title = getAmount("imprimacion")>1 ? "IMPRIMACIÓN Y JUNTAS" : "IMPRIMACIÓN"
             makeTitle(title)
             writeRow(productList.imprimacion)
             workbook.sheet("proforma").cell(currentCell()).value("Catalizador 5 a 1").style({bold:false})
-            if(productList.imprimacion.juntas){
+            if(getAmount("imprimacion")>1){
                 cellRow = cellRow+1
                 const [harinaAmount, harinaKit] = getHarinaDeCuarzoInfo()
                 writeRow({ name: "HARINA DE CUARZO", color: "", amount: harinaAmount, price: 49, kit: harinaKit})
@@ -286,6 +287,8 @@ app.post('/toexcel', async (req, res)=>{
             writeRow(productList.disolvente)
         }
         
+        //layers
+
         makeTitle(data.dosManos ? "DOS MANOS" : "UNA MANO")
         productList.layers.map((layer)=>{
             writeRow(layer)
