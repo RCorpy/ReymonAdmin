@@ -66,9 +66,10 @@ function OrdersDashboard({title, updateTableValues, setTableValues,reduxDelete, 
   }
 
   const makeNewProduct = (product) => {
+    console.log(product)
     setToModifyValues(prev=>{
       let newValues = {...prev}
-      newValues[product] = [...prev[product], { name: "", color: "", amount: 0, price: 1, kit: "" }] 
+      newValues.productList[product] = [...prev.productList[product], { name: "", color: "", amount: 0, price: 1, kit: "" }] 
       return newValues
     })
   }
@@ -353,7 +354,7 @@ function OrdersDashboard({title, updateTableValues, setTableValues,reduxDelete, 
           </div>
           <div className="form-group dashboardformgroup">
             <label>Product List</label>
-            <button type="button" onClick={makeNewProduct} style={{margin: "0px"}}>Add product</button>
+            <button type="button" onClick={()=>{activateModal({acceptFunction:(layer)=>{makeNewProduct(layer)}, title: "New Product", category: "Add one layer", body: `Select the category of the new product`})}} style={{margin: "0px"}}>Add product</button>
           </div>
           {/*PRODUCT LIST*/}
             <Table bordered hover>
@@ -409,7 +410,7 @@ function OrdersDashboard({title, updateTableValues, setTableValues,reduxDelete, 
       <Modal
         show={showModal}
         onHide={() => setShowModal(false)}
-        acceptfunction={()=>modalProps.acceptFunction()}
+        acceptfunction={(layer)=>modalProps.acceptFunction(layer)}
         title={modalProps.title}
         category={modalProps.category}
         body={modalProps.body}
