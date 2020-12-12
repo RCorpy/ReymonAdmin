@@ -17,7 +17,7 @@ export default function IndividualToast({ toastObject, onDissmiss }) {
           style={
             toastObject.title === "Order incomplete"
               ? { background: "red" }
-              : {}
+              : toastObject.body === "Creating excel file" ? { background: "lawngreen", color: "black"} : {}
           }
         >
           <img src="holder.js/20x20?text=%20" className="rounded mr-2" alt="" />

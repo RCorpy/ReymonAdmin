@@ -257,10 +257,32 @@ app.post('/toexcel', async (req, res)=>{
             cellRow = cellRow+1
         }
         const writeRow = (rowData) => {
-            workbook.sheet("proforma").cell(currentCell()).value(rowData.kit)
-            workbook.sheet("proforma").cell(currentCell("C")).value(`${rowData.name.toUpperCase()} ${rowData.color}`)
-            workbook.sheet("proforma").cell(currentCell("D")).value(parseFloat(rowData.amount))
-            workbook.sheet("proforma").cell(currentCell("E")).value(parseFloat(rowData.price))
+            if(rowData.kit){workbook.sheet("proforma").cell(currentCell()).value(rowData.kit)}
+            if(rowData.name){workbook.sheet("proforma").cell(currentCell("C")).value(`${rowData.name.toUpperCase()} ${rowData.color}`)}
+            if(rowData.amount){workbook.sheet("proforma").cell(currentCell("D")).value(parseFloat(rowData.amount))}
+            if(rowData.price){workbook.sheet("proforma").cell(currentCell("E")).value(parseFloat(rowData.price))}
+            cellRow = cellRow+1
+        }
+
+        // si le metemos un objeto podemos pasar a la parte del RichText, habria que ver que hacemos en cada caso
+
+        const writeSpecialRow = (rowData) => {
+            if(rowData[0] && typeof rowData[0] !=="object"){workbook.sheet("proforma").cell(currentCell()).value(rowData[0])}
+            else if (rowData[0]){
+                workbook.sheet("proforma").cell(currentCell()).value(new XlsxPopulate.RichText)
+            }
+            if(rowData[1] && typeof rowData[1] !=="object"){workbook.sheet("proforma").cell(currentCell("C")).value(rowData[1])}
+            else if (rowData[0]){
+                workbook.sheet("proforma").cell(currentCell("C")).value(new XlsxPopulate.RichText)
+            }
+            if(rowData[2] && typeof rowData[2] !=="object"){workbook.sheet("proforma").cell(currentCell("D")).value(parseFloat(rowData[2]))}
+            else if (rowData[0]){
+                workbook.sheet("proforma").cell(currentCell("D")).value(new XlsxPopulate.RichText)
+            }
+            if(rowData[3] && typeof rowData[3] !=="object"){workbook.sheet("proforma").cell(currentCell("E")).value(parseFloat(rowData[3]))}
+            else if (rowData[0]){
+                workbook.sheet("proforma").cell(currentCell("E")).value(new XlsxPopulate.RichText)
+            }
             cellRow = cellRow+1
         }
         const productList = data.productList
@@ -268,27 +290,26 @@ app.post('/toexcel', async (req, res)=>{
         
         const getHarinaDeCuarzoInfo = () => { return [0, "KGS 25"] } // to improve
 
-        if(getAmount("imprimacion")>0){
-            //to improve title
-            let title = getAmount("imprimacion")>1 ? "IMPRIMACIÓN Y JUNTAS" : "IMPRIMACIÓN"
-            makeTitle(title)
-            writeRow(productList.imprimacion)
-            workbook.sheet("proforma").cell(currentCell()).value("Catalizador 5 a 1").style({bold:false})
-            if(getAmount("imprimacion")>1){
-                cellRow = cellRow+1
-                const [harinaAmount, harinaKit] = getHarinaDeCuarzoInfo()
-                writeRow({ name: "HARINA DE CUARZO", color: "", amount: harinaAmount, price: 49, kit: harinaKit})
-                workbook.sheet("proforma").cell(currentCell()).value("Catalizador 5 a 1").style({bold:false})
-            }
-        }
-        
-        if(getAmount("disolvente")>0){
-            makeTitle("DISOLVENTE")
-            writeRow(productList.disolvente)
-        }
-        
-        //layers
+        const productArray= ["imprimacion", "disolvente", "layers", "noCharge", "threeD"]
 
+        const specialNotes ={
+            harina: ["Catalizador 5 a 1"],
+            masCosas: ["para añadir", "mas", "cosas"]
+        }
+        productArray.map(product=>{
+            if(getAmount(product)>0){
+                makeTitle(product.toUpperCase()) // Change the title corresponding to the situation
+                productList[product].map(element=>{
+                    writeRow(element)
+                    if(specialNotes[element.name.split(" ")[0]]){
+                        writeSpecialRow(specialNotes[element.name.split(" ")[0]])
+                    }
+                })
+            }
+        })
+
+        // EJEMPLO PARA PONER PARTE DE LA FRASE ROJA Y LA OTRA NORMAL 
+    /*
         makeTitle(data.dosManos ? "DOS MANOS" : "UNA MANO")
         productList.layers.map((layer)=>{
             writeRow(layer)
@@ -297,15 +318,8 @@ app.post('/toexcel', async (req, res)=>{
             workbook.sheet("proforma").cell(currentCell("C")).value().add("GRISES", {fontColor: RED, bold: true, fontSize: 12}).add(" 100% Sólidos (Primera y Segunda Mano)", {fontColor: BLACK, bold: true, fontSize: 12})
             cellRow = cellRow+1
         })
-        
-        if(getAmount("noCharge")>0){
-            makeTitle("SIN CARGO")
-            writeRow(productList.noCharge)
-        }
-        if(getAmount("threeD")>0){
-            makeTitle("3D")
-            writeRow(productList.threeD)
-        }
+        */
+
         
         workbook.sheet("proforma").cell("D37").value(getTotalWeight(productList))
         // Write to file.
