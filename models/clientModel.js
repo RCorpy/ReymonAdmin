@@ -2,6 +2,11 @@
 const mongoose = require('mongoose')
 
 const Schema = new mongoose.Schema({
+    telephone:{
+        type: String,
+        required: true,
+        unique: true
+    },
     name:{
         type: String,
         required: true

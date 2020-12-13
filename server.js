@@ -202,6 +202,13 @@ app.post('/deleteclient', async (req, res) => {
     deleteEntry.delete()
 })
 
+app.post('/searchcustomer', async (req, res)=> {
+    let responseEntry = await ClientModel.findOne({telephone: req.body.data.telephone})
+    if(responseEntry){res.send(responseEntry)}
+    else{res.send({message:"NOT FOUND"})}
+    
+})
+
 // -------------------------------EXCEL --------------------------------------->
 
 const BLUE = "0000FF"
@@ -294,7 +301,7 @@ app.post('/toexcel', async (req, res)=>{
             harina: ["Catalizador 5 a 1"],
             masCosas: ["para añadir", "mas", "cosas"]
         }
-        
+
         productArray.map(product=>{
             if(getAmount(product)>0){
                 makeTitle(product.toUpperCase()) // Change the title corresponding to the situation

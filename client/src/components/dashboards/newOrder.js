@@ -9,6 +9,7 @@ import {getDate, getOrderNumberPrefix} from "../functions/otherFunctions"
 import {connect} from 'react-redux'
 import {productArray} from '../../redux/productArray'
 import Modal from '../Modal'
+import {searchCustomer} from './../functions/fetchFunctions'
 
 
 const URL = process.env.URL || "http://localhost:3000/";
@@ -110,9 +111,6 @@ function NewOrderDashboard({ title , addReduxOrder, state}) {
     });
   };
 
-  const searchCustomer = () => {
-    console.log("SEARCHING");
-  };
 
   return (
     <div className="content-wrapper">
@@ -140,6 +138,7 @@ function NewOrderDashboard({ title , addReduxOrder, state}) {
                     <div className="card-header">
                       <h3 className="card-title">Customer</h3>
                       <div className="card-tools">
+                        <Button variant="light" onClick={()=>searchCustomer(tableValues.customer.telephone, setTableValues, activateModal)}><i class="fas fa-search"></i></Button>
                         <button
                           type="button"
                           className="btn btn-tool"
@@ -156,7 +155,7 @@ function NewOrderDashboard({ title , addReduxOrder, state}) {
                           <InputGroup>
                             <InputGroup.Prepend>
                               <InputGroup.Text
-                                onClick={searchCustomer}
+                                onClick={()=>searchCustomer(tableValues.customer.telephone, setTableValues, activateModal)}
                                 className="telephonePrepend"
                               >
                                 Telephone
@@ -389,7 +388,7 @@ function NewOrderDashboard({ title , addReduxOrder, state}) {
       <Modal
         show={showModal}
         onHide={() => setShowModal(false)}
-        acceptfunction={(value)=>modalProps.acceptFunction(value)}
+        acceptfunction={modalProps.acceptFunction}
         title={modalProps.title}
         category={modalProps.category}
         body={modalProps.body}

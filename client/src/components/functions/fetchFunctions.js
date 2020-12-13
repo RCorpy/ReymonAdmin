@@ -177,8 +177,27 @@ const fetchToExcel = (fileData)=>{
   });
 }
 
+const searchCustomer = (telephone, setTableValues, activateModal) => {
+  let url = "http://localhost:3000/searchcustomer";
+
+  fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      data: {
+        telephone:telephone
+      },
+    }),
+  }).then(res=>res.json()).then((result) => {
+    // do something with the result
+    if(result.message!=="NOT FOUND"){setTableValues(prev=>({...prev, customer: result}))}
+    else{activateModal({acceptFunction:false , title: "No phones match", category: "confirm", body: `${telephone} not found in DB`})}
+  });
+};
+
 
 module.exports = {
+  searchCustomer: searchCustomer,
   fetchModifyOrder: modifyOrder,
   fetchDeleteOrder: fetchDeleteOrder,
   fetchModifyClient: fetchModifyClient,

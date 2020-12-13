@@ -47,7 +47,8 @@ export default function MyModal(props) {
         </Modal.Body>
         <Modal.Footer>
           <Button variant="danger" onClick={props.onHide}>Cancel</Button>
-          {props.acceptfunction ? <Button variant="success" onClick={()=>acceptAndClose()}>Accept</Button> : <>hi</>}
+          
+          {props.acceptfunction ? <Button variant="success" onClick={()=>acceptAndClose()}>Accept</Button> : <></>}
         </Modal.Footer>
       </Modal>
     );
