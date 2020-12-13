@@ -288,14 +288,13 @@ app.post('/toexcel', async (req, res)=>{
         const productList = data.productList
         const getAmount = (product) => {return parseFloat(productList[product].length)}
         
-        const getHarinaDeCuarzoInfo = () => { return [0, "KGS 25"] } // to improve
-
         const productArray= ["imprimacion", "disolvente", "layers", "noCharge", "threeD"]
 
         const specialNotes ={
             harina: ["Catalizador 5 a 1"],
             masCosas: ["para añadir", "mas", "cosas"]
         }
+        
         productArray.map(product=>{
             if(getAmount(product)>0){
                 makeTitle(product.toUpperCase()) // Change the title corresponding to the situation

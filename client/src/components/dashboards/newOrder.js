@@ -97,9 +97,9 @@ function NewOrderDashboard({ title , addReduxOrder, state}) {
     let totalProductList = {...productList}
 
     //cambiar "layers" por product
-    const layerTotal = (product) => (totalProductList["layers"].reduce((accumulator, layer)=>(accumulator+(layer.amount*layer.price)), 0))
+    const layerTotal = (product) => (totalProductList[product].reduce((accumulator, layer)=>(accumulator+(layer.amount*layer.price)), 0))
 
-    return productArray.reduce((accu, product)=>(accu+layerTotal(product))) || -1
+    return productArray.reduce((accu, product)=>(accu+layerTotal(product)),0) || 0
   }
 
   const modifyProductList = (objectKey, value) => {
