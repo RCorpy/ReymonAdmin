@@ -173,7 +173,13 @@ app.post('/modifyproduct', async (req, res) => {
 })
 
 app.post('/modifyclient', async (req, res) => {
-    let modifyEntry = await ClientModel.findByIdAndUpdate(req.body.id, req.body.data)
+    let orderExists = await ClientModel.find({telephone: req.body.data.telephone})
+    if(orderExists.length<1 || (orderExists.length<2 && orderExists[0]._id === req.body.data._id)){
+        let modifyEntry = await ClientModel.findByIdAndUpdate(req.body.id, req.body.data)
+    }
+    else{
+        res.send({message:"NUMBER TAKEN"})
+    }
 })
 
 //delete

@@ -271,6 +271,8 @@ function OrdersDashboard({title, updateTableValues, setTableValues,reduxDelete, 
 
 
       </div>
+
+      
       <div className="wrapper myasidediv col-lg-6" style={myAsideDivStyle}>
         <div className="zindex1500">
           <h4>Modifying {toModifyValues._id}</h4>

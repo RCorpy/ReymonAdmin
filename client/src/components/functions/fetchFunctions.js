@@ -78,22 +78,18 @@ const fetchDeleteOrder = (order) => {
 
 //--------------------------client--------------------------
 
-const fetchModifyClient = (client, modifiedClient) => {
+const fetchModifyClient = ( modifiedClient, activateModal, ) => {
   let url = "http://localhost:3000/modifyclient";
 
   fetch(url, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      id: client._id,
-      data: {
-        name: modifiedClient.name,
-        discount: modifiedClient.discount,
-      },
+      id: modifiedClient._id,
+      data: modifiedClient
     }),
-  }).then((result) => {
-    // do something with the result
-    console.log("Completed with result:", result);
+  }).then(res=>res.json()).then((result) => {
+    if(result.message=="NUMBER TAKEN"){ activateModal({acceptFunction:false , title: "Number taken", category: "confirm", body: `${modifiedClient.telephone} already in DB`})}
   });
 };
 
