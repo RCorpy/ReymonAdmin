@@ -4,12 +4,11 @@ import { InputGroup, FormControl, Button } from "react-bootstrap";
 import FormInput from "../contentComponents/formInput";
 import NewOrderRow from "./newOrderRow";
 import {Link} from 'react-router-dom'
-import {addOrder} from "../functions/fetchFunctions";
+import {addClient, addOrder, searchCustomer} from "../functions/fetchFunctions";
 import {getDate, getOrderNumberPrefix} from "../functions/otherFunctions"
 import {connect} from 'react-redux'
 import {productArray} from '../../redux/productArray'
 import Modal from '../Modal'
-import {searchCustomer} from './../functions/fetchFunctions'
 
 
 const URL = process.env.URL || "http://localhost:3000/";
@@ -372,6 +371,7 @@ function NewOrderDashboard({ title , addReduxOrder, state}) {
                           }>Finalizar</Button>
                       </Link>
                         <Button variant="success" onClick={()=>{filterAllEmptyLayers(); addReduxOrder({...tableValues, productList: {...productList}})}}>Crear y modificar</Button>
+                        <Button variant="light" onClick={()=>addClient(tableValues, activateModal)}>Add client</Button>
                       <Link to="/">
                         <Button variant="danger">Cancelar</Button>
                       </Link>

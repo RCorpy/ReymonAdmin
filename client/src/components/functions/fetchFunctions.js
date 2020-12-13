@@ -29,20 +29,6 @@ const addOrder = (order) => {
     // do something with the result
     console.log("Completed with result:", result);
   });
-
-  if (order.customer.telephone && order.customer.name) {
-    fetch("http://localhost:3000/newclient", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        data: order.customer,
-        telephone: order.telephone
-      }),
-    }).then((result) => {
-      // do something with the result
-      console.log("Completed with result:", result);
-    });
-  }
 };
 
 const modifyOrder = (order, modifiedOrder) => {
@@ -195,6 +181,37 @@ const searchCustomer = (telephone, setTableValues, activateModal) => {
   });
 };
 
+const addClient = (order, activateModal) =>{
+
+  if (order.customer.telephone && order.customer.name) {
+    fetch("http://localhost:3000/newclient", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        data: order.customer,
+        override: false
+      }),
+    }).then(res=>res.json()).then((result) => {
+      result.message==="saved" ?
+      activateModal({acceptFunction:false , title: "New Client Added", category: "confirm", body: `${order.customer.telephone} added to DB`}) :
+      activateModal({acceptFunction:()=>{
+        fetch("http://localhost:3000/newclient", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            data: order.customer,
+            override: true
+          }),
+        })
+      } , title: "Replace?", category: "confirm", body: `Do you want to replace ${order.customer.telephone}?`})
+    });
+  }
+
+  else{
+    activateModal({acceptFunction:false , title: "Not enough", category: "confirm", body: `Fill in at least telephone and name`})
+  }
+}
+
 
 module.exports = {
   searchCustomer: searchCustomer,
@@ -206,6 +223,7 @@ module.exports = {
   fetchDeleteProduct: fetchDeleteProduct,
   fetchToExcel: fetchToExcel,
   addOrder: addOrder,
+  addClient: addClient,
   
 
 };

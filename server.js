@@ -135,12 +135,19 @@ app.post('/newproduct', async (req, res) => {
 })
 
 app.post('/newclient', async (req, res) => {
-    const data = await ClientModel.findOne({telephone: req.body.telephone})
+    if(req.body.override){
+        const data = await ClientModel.findOneAndUpdate({telephone: req.body.data.telephone}, req.body.data)
+        return res.send({message: "saved"})
+    }
+    const data = await ClientModel.findOne({telephone: req.body.data.telephone})
     if(!data){
         let fullData = req.body.data
-        fullData.telephone = req.body.telephone
+        delete fullData._id
         let newEntry = await new ClientModel(fullData)
-    newEntry.save()}
+        newEntry.save()
+    }
+    
+    res.send(data? {message: "modify?"} : {message: "saved"})
 })
 
 //modify, hay que buscar como se hace
