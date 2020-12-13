@@ -28,7 +28,9 @@ function OrdersDashboard({title, updateTableValues, setTableValues,reduxDelete, 
 
 
   useEffect(()=>{
-    updateTableValues()
+    if(state.totalOrders.length<2){
+      updateTableValues()
+    }
   }, [])
 
   const activateModal = (modalProps) =>{
