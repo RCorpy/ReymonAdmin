@@ -8,7 +8,9 @@ const MONTHS_TO_TRACEBACK = 6
 const initialState = {
   lastMonthOrders: [EXAMPLE_ORDER],
   totalOrders: [EXAMPLE_ORDER],
-  nextOrderNumber: ""
+  nextOrderNumber: "",
+  priceObject: {},
+  priceKeys: []
 }
 
     
@@ -17,7 +19,6 @@ function reducer(state = initialState, action) {
 
     switch (action.type) {
     case 'UPDATE_TABLEVALUES':
-        console.log(state.priceObject)
         return {
           ...state,
           lastMonthOrders:[...action.data]
@@ -26,7 +27,8 @@ function reducer(state = initialState, action) {
       
       return {
         ...state,
-        priceObject: action.data
+        priceObject: action.data,
+        priceKeys: Object.keys(action.data)
       }
 
     case 'GET_TABLEVALUES':
