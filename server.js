@@ -372,32 +372,71 @@ app.post('/toexcel', async (req, res)=>{
 app.get('/prices', async (req, res) => {
     let data = {}
 
+    const exchanger = {
+        "EPOXY WATER" : "this nuts"
+    }
+
     const exlBuf = await readFileAsync("prices.xlsx");
     //console.log(req.body)
     XlsxPopulate.fromDataAsync(exlBuf)
     .then(workbook => {
         const book = workbook.sheet(0)
         const bookRows = 200
-        let currentRow = 18
+        let priceObject = {}
+        let currentRow = 17
         let settledTitle = false
         let title = ""
+        let specialNotes = ""
 
         while(currentRow<bookRows){
             if(book.cell(`F${currentRow}`).value() && !settledTitle){
                 title = book.cell(`B${currentRow-1}`).value()
+                
                 settledTitle = true
-
+                specialNotes = book.cell(`R${currentRow-1}`).value()
+                priceObject[title] = {notes: specialNotes}
                 //remove special characters
-                console.log(title)
+                
             }
 
-            if(!book.cell(`F${currentRow}`).value()){
+            else if(!book.cell(`F${currentRow}`).value()){
                 settledTitle = false
+            }
+            else{
+                let color = book.cell(`B${currentRow}`).value()
+                priceObject[title][color] = {}
+                if(book.cell(`R${currentRow-1}`).value()){
+                    if(book.cell(`R${currentRow-1}`).value()){
+                    priceObject[title][color]["5Kg"] = book.cell(`R${currentRow-1}`).value()}
+                    if(book.cell(`AC${currentRow-1}`).value()){
+                    priceObject[title][color]["10Kg"] = book.cell(`AC${currentRow-1}`).value()}
+                    if(book.cell(`AP${currentRow-1}`).value()){
+                    priceObject[title][color]["15Kg"] = book.cell(`AP${currentRow-1}`).value()}
+                    if(book.cell(`BA${currentRow-1}`).value()){
+                    priceObject[title][color]["20Kg"] = book.cell(`BA${currentRow-1}`).value()}
+                    if(book.cell(`BL${currentRow-1}`).value()){
+                    priceObject[title][color]["30Kg"] = book.cell(`BL${currentRow-1}`).value()}
+                }
+                else{
+                    if(book.cell(`AB${currentRow-1}`).value()){
+                    priceObject[title][color]["6Kg"] = book.cell(`AB${currentRow-1}`).value()}
+                    if(book.cell(`AO${currentRow-1}`).value()){
+                    priceObject[title][color]["12Kg"] = book.cell(`AO${currentRow-1}`).value()}
+                    if(book.cell(`AZ${currentRow-1}`).value()){
+                    priceObject[title][color]["18Kg"] = book.cell(`AZ${currentRow-1}`).value()}
+                    if(book.cell(`BK${currentRow-1}`).value()){
+                    priceObject[title][color]["24Kg"] = book.cell(`BK${currentRow-1}`).value()}
+                    if(book.cell(`BL${currentRow-1}`).value()){
+                    priceObject[title][color]["30Kg"] = book.cell(`BL${currentRow-1}`).value()}
+                    
+                }
+
             }
             
             currentRow++
         }
-        data = book.cell("F18").value()
+        console.log(priceObject)
+        data = priceObject
         res.json(data)
     })
 })
