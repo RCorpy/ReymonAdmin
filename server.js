@@ -435,7 +435,6 @@ app.get('/prices', async (req, res) => {
             
             currentRow++
         }
-        console.log(priceObject)
         data = priceObject
         res.json(data)
     })

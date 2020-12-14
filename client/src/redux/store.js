@@ -17,11 +17,17 @@ function reducer(state = initialState, action) {
 
     switch (action.type) {
     case 'UPDATE_TABLEVALUES':
-        //console.log(action.data)
+        console.log(state.priceObject)
         return {
           ...state,
           lastMonthOrders:[...action.data]
         }
+    case 'GET_PRICES':
+      
+      return {
+        ...state,
+        priceObject: action.data
+      }
 
     case 'GET_TABLEVALUES':
         let [maxYear, maxMonth, maxDay] = getDate().split("-").map(element => parseFloat(element))

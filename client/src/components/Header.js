@@ -1,11 +1,17 @@
-import React from "react";
+import React, {useEffect} from "react";
 import LeftLink from './headerComponents/LeftLink'
 import LeftContainer from './headerComponents/LeftContainer'
 import RightContainer from './headerComponents/RightContainer'
+import {connect} from 'react-redux'
 
 
+function Header({state, getPrices}) {
 
-export default function Header() {
+  useEffect(()=>{
+    if(!state.priceObject){
+      getPrices()
+    }
+  },[])
   return (
     <nav className="main-header navbar navbar-expand navbar-white navbar-light">
       {/* Left navbar links */}
@@ -20,3 +26,19 @@ export default function Header() {
     </nav>
   );
 }
+
+const URL = process.env.URL || 'http://localhost:3000/'
+
+const connectedHeader = connect(state => ({state:state}), (dispatch)=>({
+  getPrices: () => {
+    fetch(`${URL}prices`)
+    .then(res=>res.json())
+    .then(data=>dispatch({
+      type:'GET_PRICES',
+      data: data
+    }))
+
+  }
+}))(Header)
+
+export default connectedHeader;

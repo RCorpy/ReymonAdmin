@@ -323,10 +323,8 @@ function NewOrderDashboard({ title , addReduxOrder, state}) {
                               value={tableValues.resinType}
                               onChange={(e)=>{e.persist();setTableValues((prev)=>({...prev, resinType: e.target.value}))}}
                             >
-                              <option value="Epoxi">Epoxi</option>
-                              <option value="Epoxi W">Epoxi W</option>
-                              <option value="Acrilica">Acrilica</option>
-                              <option value="Politop">Politop</option>
+                              {Object.keys(state.priceObject).map(key=>(<option value={key}>{key}</option>))}
+
                             </select>
                           </InputGroup>
                         </div>
