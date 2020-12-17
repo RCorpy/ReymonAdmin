@@ -144,7 +144,7 @@ const fetchDeleteProduct = (product) => {
   });
 };
 
-const fetchToExcel = (fileData)=>{
+const fetchToExcel = (fileData, productArray)=>{
   let url = "http://localhost:3000/toexcel";
   //console.log(fileData)
   fetch(url, {
@@ -152,6 +152,7 @@ const fetchToExcel = (fileData)=>{
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       data: fileData,
+      productArray: productArray
     }),
   }).then((result) => {
     // do something with the result

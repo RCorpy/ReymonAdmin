@@ -406,7 +406,7 @@ function OrdersDashboard({title, updateTableValues, setTableValues,reduxDelete, 
           <div className="form-group dashboardformgroup">
             <button className="btn btn-primary" type="submit" onClick={()=>{createToast("Saved", "Changes were saved to DB")}}>Save</button> {/*TOAST THIS*/}
             <button className="btn btn-secondary" type="button" onClick={()=>setShowMyAsideDiv(false)}>Close</button> {/*MODAL THIS*/}
-            <button className="btn btn-info" type="button" onClick={()=>{fetchToExcel(toModifyValues); createToast("In progress", "Creating excel file")}}>Excel</button>  {/*TOAST THIS*/}
+            <button className="btn btn-info" type="button" onClick={()=>{fetchToExcel(toModifyValues, state.priceKeys); createToast("In progress", "Creating excel file")}}>Excel</button>  {/*TOAST THIS*/}
           </div>
           </form>
         </div>

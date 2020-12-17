@@ -232,19 +232,20 @@ const BLACK = "000000"
 const getLayerWeight = (layer) => {return (parseFloat(layer.kit.split(" ")) || 0 )*parseFloat(layer.amount)}
 
 const getTotalWeight = (productList) => {
-    return (
-        productList.imprimacion.reduce((accumulator, element)=>{return accumulator+getLayerWeight(element)},0)+
-        productList.noCharge.reduce((accumulator, element)=>{return accumulator+getLayerWeight(element)},0)+
-        productList.layers.reduce((accumulator, element)=>{return accumulator+getLayerWeight(element)},0)+
-        productList.threeD.reduce((accumulator, element)=>{return accumulator+getLayerWeight(element)},0)+
-        productList.disolvente.reduce((accumulator, element)=>{return accumulator+getLayerWeight(element)},0)
+    return (3
+        //productList.imprimacion.reduce((accumulator, element)=>{return accumulator+getLayerWeight(element)},0)+
+        //productList.noCharge.reduce((accumulator, element)=>{return accumulator+getLayerWeight(element)},0)+
+        //productList.layers.reduce((accumulator, element)=>{return accumulator+getLayerWeight(element)},0)+
+        //productList.threeD.reduce((accumulator, element)=>{return accumulator+getLayerWeight(element)},0)+
+        //productList.disolvente.reduce((accumulator, element)=>{return accumulator+getLayerWeight(element)},0)
         )
 }
 
 app.post('/toexcel', async (req, res)=>{
-    
+    console.log("started")
     const exlBuf = await readFileAsync("clean.xlsx");
     const data = req.body.data
+    const productArray= req.body.productArray
     //console.log(req.body)
     XlsxPopulate.fromDataAsync(exlBuf)
     .then(workbook => {
@@ -308,7 +309,7 @@ app.post('/toexcel', async (req, res)=>{
         const productList = data.productList
         const getAmount = (product) => {return parseFloat(productList[product].length)}
         
-        const productArray= ["imprimacion", "disolvente", "layers", "noCharge", "threeD"]
+        
 
         const specialNotes ={
             harina: ["Catalizador 5 a 1"],
@@ -363,7 +364,7 @@ app.post('/toexcel', async (req, res)=>{
             require('child_process').exec(`start "" ${outFilePath()}`); 
         }
         
-        workbook.toFileAsync(`${outFilePath()}`).then(()=>openFiles())
+        workbook.toFileAsync(`${outFilePath()}`).then(()=>openFiles()).then(()=>console.log("finished writing"))
     });
 
 })
