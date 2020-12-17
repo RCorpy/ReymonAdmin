@@ -229,16 +229,17 @@ const RED = "FF0000"
 const WHITE = "FFFFFF"
 const BLACK = "000000"
 
-const getLayerWeight = (layer) => {return (parseFloat(layer.kit.split(" ")) || 0 )*parseFloat(layer.amount)}
+const getLayerWeight = (layer) => {return (parseFloat(layer.kit.split(" ")[0]) || 0 )*parseFloat(layer.amount)}
 
-const getTotalWeight = (productList) => {
-    return (3
-        //productList.imprimacion.reduce((accumulator, element)=>{return accumulator+getLayerWeight(element)},0)+
-        //productList.noCharge.reduce((accumulator, element)=>{return accumulator+getLayerWeight(element)},0)+
-        //productList.layers.reduce((accumulator, element)=>{return accumulator+getLayerWeight(element)},0)+
-        //productList.threeD.reduce((accumulator, element)=>{return accumulator+getLayerWeight(element)},0)+
-        //productList.disolvente.reduce((accumulator, element)=>{return accumulator+getLayerWeight(element)},0)
-        )
+const getTotalWeight = (productList,productArray) => {
+    let total = 3
+    productArray.map((element)=>{
+        if(productList[element].length>0){
+            total = total + productList[element].reduce((accumulator, element)=>{return accumulator+getLayerWeight(element)},0)
+        }
+        
+    })
+    return total
 }
 
 app.post('/toexcel', async (req, res)=>{
@@ -341,7 +342,7 @@ app.post('/toexcel', async (req, res)=>{
         */
 
         
-        workbook.sheet("proforma").cell("D37").value(getTotalWeight(productList))
+        workbook.sheet("proforma").cell("D37").value(getTotalWeight(productList, productArray))
         // Write to file.
 
         const getYear = ()=>{
