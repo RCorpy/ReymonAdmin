@@ -72,10 +72,7 @@ function NewOrderDashboard({ title , addReduxOrder, state}) {
   }
 
   const searchPrices = ()=>{
-    let url = "http://localhost:3000/prices";
-    fetch(url)
-    .then(res=>res.json())
-    .then(data => console.log(data))
+console.log("searching")
     
   }
 

@@ -5,7 +5,7 @@ import RightContainer from './headerComponents/RightContainer'
 import {connect} from 'react-redux'
 
 
-function Header({state, getPrices}) {
+function Header() {
 
   return (
     <nav className="main-header navbar navbar-expand navbar-white navbar-light">
