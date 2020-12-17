@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import Card from "../contentComponents/Card";
 import { InputGroup, FormControl, Button } from "react-bootstrap";
 import FormInput from "../contentComponents/formInput";
@@ -7,7 +7,6 @@ import {Link} from 'react-router-dom'
 import {addClient, addOrder, searchCustomer} from "../functions/fetchFunctions";
 import {getDate, getOrderNumberPrefix} from "../functions/otherFunctions"
 import {connect} from 'react-redux'
-import {productArray} from '../../redux/productArray'
 import Modal from '../Modal'
 
 
@@ -44,15 +43,15 @@ function NewOrderDashboard({ title , addReduxOrder, state}) {
     completed: false,
   });
 
-  const [productList, setProductList] = useState({
-    imprimacion: [],
-    disolvente: [],
-    layers: [
-      { name: "", color: "", amount: 0, price: 1, kit: "" },
-    ],
-    noCharge: [],
-    threeD: [],
-  });
+  const [productList, setProductList] = useState({});
+
+  useEffect(()=>{
+    let productListObject = {}
+    state.priceKeys.map((key)=>{productListObject[key]=[]})
+    
+    setProductList(productListObject)
+
+  },[state.priceKeys])
 
   const activateModal = (modalProps) =>{
     setShowModal(true)
@@ -65,6 +64,7 @@ function NewOrderDashboard({ title , addReduxOrder, state}) {
       {
         let newProductList = {...prev}
         console.log(newProductList, productType)
+        console.log(prev[productType])
         newProductList[productType] = [...prev[productType], { name: "", color: "", amount: 0, price: 1, kit: "" }]
         return newProductList
       }
@@ -90,16 +90,17 @@ function NewOrderDashboard({ title , addReduxOrder, state}) {
   }
 
   const filterAllEmptyLayers = () => {
-    productArray.map(element=>{filterEmptyLayers(element)})
+    state.priceKeys.map(element=>{filterEmptyLayers(element)})
   }
 
   const calcTotal = () => {
     let totalProductList = {...productList}
 
     //cambiar "layers" por product
-    const layerTotal = (product) => (totalProductList[product].reduce((accumulator, layer)=>(accumulator+(layer.amount*layer.price)), 0))
+    const layerTotal = (product) => {if(totalProductList[product]){
+      return totalProductList[product].reduce((accumulator, layer)=>(accumulator+(layer.amount*layer.price)), 0)}}
 
-    return productArray.reduce((accu, product)=>(accu+layerTotal(product)),0) || 0
+    return state.priceKeys.reduce((accu, product)=>(accu+layerTotal(product)),0) || 0
   }
 
   const modifyProductList = (objectKey, value) => {
@@ -342,8 +343,8 @@ function NewOrderDashboard({ title , addReduxOrder, state}) {
                         <div className="col-md-2">Kit</div>
                         <div className="col-md-2">Total</div>
                       </div>
-                      {productArray.map(layer=>{
-                        if(productList[layer].length>0){
+                      {state.priceKeys.map(layer=>{
+                        if(productList[layer] && productList[layer].length>0){
                           return (
                             <div className="row">
                               <div className="col-md-12">

@@ -6,7 +6,6 @@ import Validator from '../functions/validators'
 import {Button, InputGroup, ButtonToolbar, FormControl} from 'react-bootstrap';
 import {connect} from 'react-redux'
 import {EXAMPLE_ORDER} from '../../redux/exampleOrder'
-import {productArray} from '../../redux/productArray'
 import Modal from '../Modal'
 import Toasts from '../Toast'
 
@@ -59,11 +58,11 @@ function OrdersDashboard({title, updateTableValues, setTableValues,reduxDelete, 
   const getTotal = (order)=> {
     
     
-    return productArray.reduce((accumulator, product)=>{
+    return state.priceKeys.reduce((accumulator, product)=>{
 
-
-        return accumulator + (order.productList[product].reduce((acc, layerProduct)=>(acc+layerProduct.price*layerProduct.amount),0)) //temporary
- 
+      if(order.productList[product]){
+      return accumulator + (order.productList[product].reduce((acc, layerProduct)=>(acc+layerProduct.price*layerProduct.amount),0)) //temporary
+ }
     } , 0)
   }
 
@@ -374,11 +373,11 @@ function OrdersDashboard({title, updateTableValues, setTableValues,reduxDelete, 
                     </thead>
                     <tbody>
                       {/* SI ES "LAYERS" es un array y hay que hacerle otro map */}
-                      {productArray.map((product)=>{
+                      {state.priceKeys.map((product)=>{
                         return(
                             <>
-                              {toModifyValues.productList[product].length>0 ? <td>{product}</td>: <></>}
-                              {toModifyValues.productList[product].map((layer, index)=>(
+                              {toModifyValues.productList[product] && toModifyValues.productList[product].length>0 ? <td>{product}</td>: <></>}
+                              {toModifyValues.productList[product] && toModifyValues.productList[product].map((layer, index)=>(
                               <tr>
                                 <td><input type="text" onChange={(e)=>setToModifyValues({...toModifyValues ,productList: getMyNewProductListLayers(product, index, e.target.value, "name")})} value={toModifyValues.productList[product][index].name} /></td>
                                 <td><input type="text" onChange={(e)=>setToModifyValues({...toModifyValues ,productList: getMyNewProductListLayers(product, index, e.target.value, "color")})} value={toModifyValues.productList[product][index].color}/></td>

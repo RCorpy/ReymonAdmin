@@ -1,9 +1,10 @@
 import React, {useState} from 'react'
 import {Modal, Button} from "react-bootstrap"
-import {productArray} from '../redux/productArray'
+import {connect} from 'react-redux'
 
 
-export default function MyModal(props) {
+
+function MyModal(props) {
     
     const [value, setValue] = useState("imprimacion")
     const category= props.category
@@ -40,7 +41,7 @@ export default function MyModal(props) {
                 value={value}
                 onChange={(e)=>{setValue(e.target.value)}}
                 >
-                    {productArray.map(element=><option value={element}>{element}</option>)}
+                    {props.state.priceKeys.map(element=><option value={element}>{element}</option>)}
                 </select>
               
           </p>}
@@ -53,3 +54,7 @@ export default function MyModal(props) {
       </Modal>
     );
   }
+
+  const connectedMyModal = connect(state => ({state:state}), ()=>({}))(MyModal)
+  
+  export default connectedMyModal;
