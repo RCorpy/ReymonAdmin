@@ -1,6 +1,6 @@
 import React, { useState,useEffect } from "react";
 import Card from "../contentComponents/Card";
-import { InputGroup, FormControl, Button } from "react-bootstrap";
+import { InputGroup, FormControl, Button, Table } from "react-bootstrap";
 import FormInput from "../contentComponents/formInput";
 import NewOrderRow from "./newOrderRow";
 import {Link} from 'react-router-dom'
@@ -336,31 +336,39 @@ console.log("searching")
                       <div className="row">
                         <Button onClick={()=>activateModal({acceptFunction:(layer)=>{addOneLayer(layer)}, title: "Add one layer", category: "select product layer", body: `What type?`})}>New Product</Button>
                       </div>
-                      <div className="row">
-                        <div className="col-md-2">Name</div>
-                        <div className="col-md-2">Color</div>{" "}
-                        <div className="col-md-2">Amount</div>{" "}
-                        <div className="col-md-2">Price</div>
-                        <div className="col-md-2">Kit</div>
-                        <div className="col-md-2">Total</div>
-                      </div>
-                      {state.priceKeys.map(layer=>{
-                        if(productList[layer] && productList[layer].length>0){
-                          return (
-                            <div className="row">
-                              <div className="col-md-12">
+                      <Table bordered hover>
+                      <thead>
+                        <tr>
+                          <th>Name</th>
+                          <th>Color</th>
+                          <th>Amount</th>
+                          <th>Price</th>
+                          <th>Kit</th>
+                          <th>Total</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {state.priceKeys.map(layer=>{
+
+                          if(productList[layer] && productList[layer].length>0){
+                            return (<>
+                              <tr>
                                 <span>{layer}</span>
-                                <button onClick={()=>filterEmptyLayers(layer)}><i class="fas fa-filter"></i></button>
-                              </div>
-                              <NewOrderRow
-                                layer={layer}
-                                items={productList[layer]}
-                                changeFunction={(v)=>{modifyProductList(layer, v)}}
-                              />
-                            </div>
-                          )
-                        }
-                        })}
+                                      <button onClick={()=>filterEmptyLayers(layer)}><i class="fas fa-filter"></i></button>
+                              </tr>
+                                <NewOrderRow
+                                  layer={layer}
+                                  items={productList[layer]}
+                                  changeFunction={(v)=>{modifyProductList(layer, v)}}
+                                />
+                                </>
+                            )
+                          }
+                          })}
+                      </tbody>
+                      </Table>
+
+
                       
                             <div>Total: {calcTotal()}</div>
                     </div>
