@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import {Modal, Button} from "react-bootstrap"
 import {connect} from 'react-redux'
 
@@ -6,9 +6,11 @@ import {connect} from 'react-redux'
 
 function MyModal(props) {
     
-    const [value, setValue] = useState("imprimacion")
+    const [value, setValue] = useState("")
     const category= props.category
-
+    useEffect(()=>{
+      setValue(props.state.priceKeys[0])
+    },[props.state.priceKeys])
     // props => acceptFunction, title, body, category, defaultValue
     const acceptAndClose = ()=>{
       console.log("finalValue", value, props.acceptfunction)

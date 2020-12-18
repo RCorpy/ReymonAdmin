@@ -372,7 +372,6 @@ app.post('/toexcel', async (req, res)=>{
 
 
 app.get('/prices', async (req, res) => {
-    let data = {}
 
     const exchanger = {
         "EPOXY WATER" : "this nuts"
@@ -383,53 +382,61 @@ app.get('/prices', async (req, res) => {
     XlsxPopulate.fromDataAsync(exlBuf)
     .then(workbook => {
         const book = workbook.sheet(0)
-        const bookRows = 200
+        const bookRows = 250
         let priceObject = {}
         let currentRow = 17
-        let settledTitle = false
+        //let settledTitle = false
+        let settledInnerProduct = false
+        let innerProduct= ""
         let title = ""
         let specialNotes = ""
 
         while(currentRow<bookRows){
-            if(book.cell(`F${currentRow}`).value() && !settledTitle){
-                title = book.cell(`B${currentRow-1}`).value()
-                
-                settledTitle = true
-                specialNotes = book.cell(`R${currentRow-1}`).value()
-                priceObject[title] = {notes: specialNotes}
-                //remove special characters
+            //checks new category (title)
+            if(book.cell(`B${currentRow}`).value()){
+                title = book.cell(`B${currentRow}`).value()
+                priceObject[title] = {}
+            }
+            //checks if we are inside a innerProduct and sets the notes for the innerProduct
+            if(book.cell(`C${currentRow}`).value() && !settledInnerProduct){
+                innerProduct = book.cell(`C${currentRow}`).value()
+                settledInnerProduct=true
+                specialNotes = book.cell(`S${currentRow}`).value()
+                priceObject[title][innerProduct]={notes: specialNotes}
                 
             }
-
-            else if(!book.cell(`F${currentRow}`).value()){
-                settledTitle = false
+            // in case we no longer have more variables in innerProduct, we reset
+            else if(!book.cell(`C${currentRow}`).value()){
+                settledInnerProduct = false
+                specialNotes = ""
             }
+            //Only case left is that we are currently reading variables of innerProduct
             else{
-                let color = book.cell(`B${currentRow}`).value()
-                priceObject[title][color] = {}
-                if(book.cell(`R${currentRow-1}`).value()){
-                    if(book.cell(`R${currentRow-1}`).value()){
-                    priceObject[title][color]["5Kg"] = book.cell(`R${currentRow-1}`).value()}
-                    if(book.cell(`AC${currentRow-1}`).value()){
-                    priceObject[title][color]["10Kg"] = book.cell(`AC${currentRow-1}`).value()}
-                    if(book.cell(`AP${currentRow-1}`).value()){
-                    priceObject[title][color]["15Kg"] = book.cell(`AP${currentRow-1}`).value()}
-                    if(book.cell(`BA${currentRow-1}`).value()){
-                    priceObject[title][color]["20Kg"] = book.cell(`BA${currentRow-1}`).value()}
-                    if(book.cell(`BL${currentRow-1}`).value()){
-                    priceObject[title][color]["30Kg"] = book.cell(`BL${currentRow-1}`).value()}
+                //priceObject[title] = {notes: specialNotes}
+                let color = book.cell(`C${currentRow}`).value()
+                priceObject[title][innerProduct][color] = {}
+                if(book.cell(`S${currentRow}`).value()){
+                    priceObject[title][innerProduct][color]["5Kg"] = book.cell(`S${currentRow}`).value()
+                    if(book.cell(`AC${currentRow}`).value()){
+                    priceObject[title][innerProduct][color]["10Kg"] = book.cell(`AD${currentRow}`).value()}
+                    if(book.cell(`AP${currentRow}`).value()){
+                    priceObject[title][innerProduct][color]["15Kg"] = book.cell(`AQ${currentRow}`).value()}
+                    if(book.cell(`BA${currentRow}`).value()){
+                    priceObject[title][innerProduct][color]["20Kg"] = book.cell(`BB${currentRow}`).value()}
+                    if(book.cell(`BL${currentRow}`).value()){
+                    priceObject[title][innerProduct][color]["30Kg"] = book.cell(`BM${currentRow}`).value()}
                 }
                 else{
-                    if(book.cell(`AB${currentRow-1}`).value()){
-                    priceObject[title][color]["6Kg"] = book.cell(`AB${currentRow-1}`).value()}
-                    if(book.cell(`AO${currentRow-1}`).value()){
-                    priceObject[title][color]["12Kg"] = book.cell(`AO${currentRow-1}`).value()}
-                    if(book.cell(`AZ${currentRow-1}`).value()){
-                    priceObject[title][color]["18Kg"] = book.cell(`AZ${currentRow-1}`).value()}
-                    if(book.cell(`BK${currentRow-1}`).value()){
-                    priceObject[title][color]["24Kg"] = book.cell(`BK${currentRow-1}`).value()}
-                    if(book.cell(`BL${currentRow-1}`).value()){
-                    priceObject[title][color]["30Kg"] = book.cell(`BL${currentRow-1}`).value()}
+                    if(book.cell(`AC${currentRow}`).value()){
+                    priceObject[title][innerProduct][color]["6Kg"] = book.cell(`AC${currentRow}`).value()}
+                    if(book.cell(`AO${currentRow}`).value()){
+                    priceObject[title][innerProduct][color]["12Kg"] = book.cell(`AP${currentRow}`).value()}
+                    if(book.cell(`AZ${currentRow}`).value()){
+                    priceObject[title][innerProduct][color]["18Kg"] = book.cell(`BA${currentRow}`).value()}
+                    if(book.cell(`BK${currentRow}`).value()){
+                    priceObject[title][innerProduct][color]["24Kg"] = book.cell(`BL${currentRow}`).value()}
+                    if(book.cell(`BL${currentRow}`).value()){
+                    priceObject[title][innerProduct][color]["30Kg"] = book.cell(`BM${currentRow}`).value()}
                     
                 }
 
@@ -437,8 +444,8 @@ app.get('/prices', async (req, res) => {
             
             currentRow++
         }
-        data = priceObject
-        res.json(data)
+        console.log(priceObject, priceObject['EPOXY WATER'])
+        res.json(priceObject)
     })
 })
 

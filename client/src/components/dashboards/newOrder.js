@@ -64,8 +64,11 @@ function NewOrderDashboard({ title , addReduxOrder, state}) {
       {
         let newProductList = {...prev}
         console.log(newProductList, productType)
+        console.warn("prev", prev)
         console.log(prev[productType])
-        newProductList[productType] = [...prev[productType], { name: "", color: "", amount: 0, price: 1, kit: "" }]
+        if(prev[productType]){
+          newProductList[productType] = [...prev[productType], { name: "", color: "", amount: 0, price: 1, kit: "" }]
+      }else{newProductList[productType] = [{ name: "", color: "", amount: 0, price: 1, kit: "" }]}
         return newProductList
       }
       )
