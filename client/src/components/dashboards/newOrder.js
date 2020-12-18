@@ -67,9 +67,6 @@ function NewOrderDashboard({ title , addReduxOrder, state}) {
         let firstColorInFirstName = Object.keys(state.priceObject[productType][firstNameInCategory])[1] // el 0 son las notas especiales
         let firstKit = Object.keys(state.priceObject[productType][firstNameInCategory][firstColorInFirstName])[0]
         let priceForThisKit = state.priceObject[productType][firstNameInCategory][firstColorInFirstName][firstKit]
-        //console.log(newProductList, productType)
-        //console.warn("this", firstColorInFirstName)
-        //console.log(prev[productType])
         if(prev[productType]){
           newProductList[productType] = [...prev[productType], { name: firstNameInCategory, color: firstColorInFirstName, amount: 0, price: priceForThisKit, kit: firstKit }]
       }else{newProductList[productType] = [{ name: firstNameInCategory, color: firstColorInFirstName, amount: 0, price: priceForThisKit, kit: firstKit }]}
@@ -353,7 +350,6 @@ console.log("searching")
                             <div className="row">
                               <div className="col-md-12">
                                 <span>{layer}</span>
-                                <button onClick={searchPrices}><i class="fas fa-search"></i></button>
                                 <button onClick={()=>filterEmptyLayers(layer)}><i class="fas fa-filter"></i></button>
                               </div>
                               <NewOrderRow

@@ -401,7 +401,7 @@ app.get('/prices', async (req, res) => {
             if(book.cell(`C${currentRow}`).value() && !settledInnerProduct){
                 innerProduct = book.cell(`C${currentRow}`).value()
                 settledInnerProduct=true
-                specialNotes = book.cell(`S${currentRow}`).value()
+                specialNotes = book.cell(`S${currentRow}`).value() || "none"
                 priceObject[title][innerProduct]={notes: specialNotes}
                 
             }

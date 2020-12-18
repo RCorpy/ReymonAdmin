@@ -14,6 +14,7 @@ function NewOrderRow({ items, changeFunction, layer, state }) {
 
     return items.map((element, index) => {
       const colorPossibilities = Object.keys(state.priceObject[layer][element.name])
+      colorPossibilities.shift()
       const kitPossibilities = Object.keys(state.priceObject[layer][element.name][element.color])
       return (
       <>
@@ -21,6 +22,7 @@ function NewOrderRow({ items, changeFunction, layer, state }) {
         value={element.name}
         onChange={
           (e)=>{
+            console.log(state.priceObject[layer])
             let getFirstColor= Object.keys(state.priceObject[layer][e.target.value])[1]
             let getFirstKit=Object.keys(state.priceObject[layer][e.target.value][getFirstColor])[0]
             let getPrice = state.priceObject[layer][e.target.value][getFirstColor][getFirstKit]
