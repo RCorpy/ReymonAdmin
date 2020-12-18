@@ -417,25 +417,25 @@ app.get('/prices', async (req, res) => {
                 priceObject[title][innerProduct][color] = {}
                 if(book.cell(`S${currentRow}`).value()){
                     priceObject[title][innerProduct][color]["5Kg"] = book.cell(`S${currentRow}`).value()
-                    if(book.cell(`AC${currentRow}`).value()){
+                    if(book.cell(`AD${currentRow}`).value()){
                     priceObject[title][innerProduct][color]["10Kg"] = book.cell(`AD${currentRow}`).value()}
-                    if(book.cell(`AP${currentRow}`).value()){
+                    if(book.cell(`AQ${currentRow}`).value()){
                     priceObject[title][innerProduct][color]["15Kg"] = book.cell(`AQ${currentRow}`).value()}
-                    if(book.cell(`BA${currentRow}`).value()){
+                    if(book.cell(`BB${currentRow}`).value()){
                     priceObject[title][innerProduct][color]["20Kg"] = book.cell(`BB${currentRow}`).value()}
-                    if(book.cell(`BL${currentRow}`).value()){
+                    if(book.cell(`BM${currentRow}`).value()){
                     priceObject[title][innerProduct][color]["30Kg"] = book.cell(`BM${currentRow}`).value()}
                 }
                 else{
                     if(book.cell(`AC${currentRow}`).value()){
                     priceObject[title][innerProduct][color]["6Kg"] = book.cell(`AC${currentRow}`).value()}
-                    if(book.cell(`AO${currentRow}`).value()){
+                    if(book.cell(`AP${currentRow}`).value()){
                     priceObject[title][innerProduct][color]["12Kg"] = book.cell(`AP${currentRow}`).value()}
-                    if(book.cell(`AZ${currentRow}`).value()){
+                    if(book.cell(`BA${currentRow}`).value()){
                     priceObject[title][innerProduct][color]["18Kg"] = book.cell(`BA${currentRow}`).value()}
-                    if(book.cell(`BK${currentRow}`).value()){
-                    priceObject[title][innerProduct][color]["24Kg"] = book.cell(`BL${currentRow}`).value()}
                     if(book.cell(`BL${currentRow}`).value()){
+                    priceObject[title][innerProduct][color]["24Kg"] = book.cell(`BL${currentRow}`).value()}
+                    if(book.cell(`BM${currentRow}`).value()){
                     priceObject[title][innerProduct][color]["30Kg"] = book.cell(`BM${currentRow}`).value()}
                     
                 }
