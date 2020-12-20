@@ -4,10 +4,11 @@ import { InputGroup, FormControl, Button, Table } from "react-bootstrap";
 import FormInput from "../contentComponents/formInput";
 import NewOrderRow from "./newOrderRow";
 import {Link} from 'react-router-dom'
-import {addClient, addOrder, searchCustomer} from "../functions/fetchFunctions";
+import {addClient, addOrder, searchCustomer, fetchToExcel} from "../functions/fetchFunctions";
 import {getDate, getOrderNumberPrefix} from "../functions/otherFunctions"
 import {connect} from 'react-redux'
 import Modal from '../Modal'
+
 
 
 const URL = process.env.URL || "http://localhost:3000/";
@@ -375,10 +376,10 @@ console.log("searching")
                     <div className="card-body">
                       <Link to={"/Orders"}>
                         <Button onClick={
-                          ()=>{filterAllEmptyLayers(); addReduxOrder({...tableValues, productList: {...productList}})}
+                          ()=>{fetchToExcel({...tableValues, productList: productList}, state.priceKeys);filterAllEmptyLayers(); addReduxOrder({...tableValues, productList: {...productList}})}
                           }>Finalizar</Button>
                       </Link>
-                        <Button variant="success" onClick={()=>{filterAllEmptyLayers(); addReduxOrder({...tableValues, productList: {...productList}})}}>Crear y modificar</Button>
+                        <Button variant="success" onClick={()=>{fetchToExcel({...tableValues, productList: productList}, state.priceKeys);filterAllEmptyLayers(); addReduxOrder({...tableValues, productList: {...productList}})}}>Crear y modificar</Button>
                         <Button variant="light" onClick={()=>addClient(tableValues, activateModal)}>Add client</Button>
                       <Link to="/">
                         <Button variant="danger">Cancelar</Button>
