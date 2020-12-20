@@ -1,5 +1,6 @@
 import React from "react";
 import {connect} from "react-redux"
+import {Form} from 'react-bootstrap'
 
 function NewOrderRow({ items, changeFunction, layer, state }) {
 
@@ -11,7 +12,6 @@ function NewOrderRow({ items, changeFunction, layer, state }) {
 
     const productPossibilities = Object.keys(state.priceObject[layer])
     //hacer cambios en otras columnas solo cuando no exista la posibilidad de la opcion actual
-    //formatear la tabla
 
     return items.map((element, index) => {
       const colorPossibilities = Object.keys(state.priceObject[layer][element.name])
@@ -20,7 +20,7 @@ function NewOrderRow({ items, changeFunction, layer, state }) {
       return (
       <tr>
         <td>
-          <select
+        <Form.Control as="select"
           value={element.name}
           onChange={
             (e)=>{
@@ -33,10 +33,11 @@ function NewOrderRow({ items, changeFunction, layer, state }) {
           }
           >
             {productPossibilities.map(color=>(<option value={color}>{color}</option>))}
-          </select>
+          
+          </Form.Control>
         </td>
         <td>
-          <select
+          <Form.Control as="select"
           value={element.color}
           onChange={
             (e)=>{
@@ -48,16 +49,18 @@ function NewOrderRow({ items, changeFunction, layer, state }) {
           }
           >
             {colorPossibilities.map(product=>(<option value={product}>{product}</option>))}
-          </select>
+          </Form.Control>
+          
         </td>
         <td>
-          <input className="col-md-2" value={element.amount} onChange={(e)=>changeFunction(arrayChange(index, {...element,  amount: e.target.value}))}/>
+          <Form.Control type="number" value={element.amount} onChange={(e)=>changeFunction(arrayChange(index, {...element,  amount: e.target.value}))} />
+          
         </td>
         <td>
-          <input className="col-md-2" value={element.price} onChange={(e)=>changeFunction(arrayChange(index, {...element, price: e.target.value}))}/>
+          <Form.Control type="number" value={element.price.toFixed(2)} onChange={(e)=>changeFunction(arrayChange(index, {...element, price: e.target.value}))} />
         </td>    
         <td>    
-          <select
+          <Form.Control as="select"
           value={element.kit}
           onChange={
             (e)=>{
@@ -68,10 +71,10 @@ function NewOrderRow({ items, changeFunction, layer, state }) {
           }
           >
             {kitPossibilities.map(product=>(<option value={product}>{product}</option>))}
-          </select>
+          </Form.Control>
           </td>
         <td>
-          <input className="col-md-2" value={element.price*element.amount}></input>
+          <Form.Control type="number" value={(element.price*element.amount).toFixed(2)} />
         </td>
       </tr>
     )});

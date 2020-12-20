@@ -101,7 +101,7 @@ console.log("searching")
     const layerTotal = (product) => {if(totalProductList[product]){
       return totalProductList[product].reduce((accumulator, layer)=>(accumulator+(layer.amount*layer.price)), 0)}}
 
-    return state.priceKeys.reduce((accu, product)=>(accu+layerTotal(product)),0) || 0
+    return state.priceKeys.reduce((accu, product)=>(accu+layerTotal(product)),0).toFixed(2) || 0
   }
 
   const modifyProductList = (objectKey, value) => {
