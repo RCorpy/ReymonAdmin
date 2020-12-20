@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from "react";
 import Card from "../contentComponents/Card"
 import {ButtonGroup, Table} from "react-bootstrap"
-import {fetchModifyOrder, fetchDeleteOrder, fetchToExcel} from '../functions/fetchFunctions'
+import {fetchModifyOrder, fetchDeleteOrder, fetchToExcel, openFolder} from '../functions/fetchFunctions'
 import Validator from '../functions/validators'
 import {Button, InputGroup, ButtonToolbar, FormControl} from 'react-bootstrap';
 import {connect} from 'react-redux'
@@ -276,7 +276,7 @@ function OrdersDashboard({title, updateTableValues, setTableValues,reduxDelete, 
       
       <div className="wrapper myasidediv col-lg-6" style={myAsideDivStyle}>
         <div className="zindex1500">
-          <h4>Modifying {toModifyValues._id}</h4>
+          <h4 onClick={()=>openFolder(toModifyValues)}>Modifying {toModifyValues._id}</h4>
           <form className="asideform" onSubmit={handleAsideSubmit}>
           <div className="form-group dashboardformgroup">
             <label>Order Number</label>

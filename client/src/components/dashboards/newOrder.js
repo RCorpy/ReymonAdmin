@@ -4,7 +4,7 @@ import { InputGroup, FormControl, Button, Table } from "react-bootstrap";
 import FormInput from "../contentComponents/formInput";
 import NewOrderRow from "./newOrderRow";
 import {Link} from 'react-router-dom'
-import {addClient, addOrder, searchCustomer, fetchToExcel} from "../functions/fetchFunctions";
+import {addClient, addOrder, searchCustomer, fetchToExcel, openFolder} from "../functions/fetchFunctions";
 import {getDate, getOrderNumberPrefix} from "../functions/otherFunctions"
 import {connect} from 'react-redux'
 import Modal from '../Modal'

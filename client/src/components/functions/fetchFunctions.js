@@ -209,6 +209,19 @@ const addClient = (order, activateModal) =>{
   }
 }
 
+const openFolder= (order)=>{
+  
+    let url = "http://localhost:3000/openfolder";
+  
+    fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        data: order
+      }),
+    })
+  
+}
 
 module.exports = {
   searchCustomer: searchCustomer,
@@ -221,6 +234,6 @@ module.exports = {
   fetchToExcel: fetchToExcel,
   addOrder: addOrder,
   addClient: addClient,
-  
+  openFolder: openFolder,  
 
 };

@@ -449,6 +449,23 @@ app.get('/prices', async (req, res) => {
     })
 })
 
+app.post('/openfolder', async (req, res) => {
+    let order = req.body.data
+
+    const getYear = ()=>{
+        return order.orderDate.split("-")[0]
+    }
+    const outFilePath = ()=>{
+        let dir = `/TEKLAKE${getYear()}/${order.orderNumber}`
+        return path.join(__dirname, dir)
+    }
+
+    console.log("order", order)
+    console.log("filepath", outFilePath())
+    require('child_process').exec(`start "" ${outFilePath()}`); 
+
+})
+
 app.get("*", (req, res)=>{
     res.sendFile(path.join(__dirname, "/client/build/index.html"))
 })
