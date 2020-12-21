@@ -35,16 +35,16 @@ function ThisApp({setPrices}) {
           path="/Clients"
           render={() => <ClientsDashboard title="R-Clients" />}
         />
-        <Route
+        {/*<Route
           path="/Products"
           render={() => <ProductsDashboard title="R-Products" />}
-        />
+        />*/}
         <Route path="/Charts" render={() => <Charts title="R-Dashboard" />} />
         <Route
           path="/NewOrder"
           render={() => <NewOrder title="Create New Order" />}
         />
-        <Route path="/" render={() => <Charts title="R-Dashboard" />} />
+        <Route path="/" render={() =>  <NewOrder title="Create New Order" />} />
       </Switch>
       <Footer />
     </>

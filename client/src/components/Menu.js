@@ -18,19 +18,19 @@ export default function Menu() {
         <User src={"/dist/img/user2-160x160.jpg"} name={"Reymon"} to="/RR" />
         {/* Sidebar Menu */}
         <SideNavBar>
-          <Folder text="Dashboard" spanText="hello">
-              <FolderItem to={"/Orders"} text={"Orders"}/>
-              <FolderItem to={"/Clients"} text={"Customers"}/>
-              <FolderItem to={"/Products"} text={"Products"}/>
-              <FolderItem to={"/NewOrder"} text="New Order" />
+          <FolderItem to={"/NewOrder"} text="New Order" icon="fas fa-file-signature" />
+          <GroupTitle text="DASHBOARDS" />
+          <Folder text="Dashboard" icon="fas fa-th"> {/*spanText="hello"*/}
+              <FolderItem to={"/Orders"} text={"Orders"} icon="fas fa-money-bill-wave-alt"/>
+              <FolderItem to={"/Clients"} text={"Customers"} icon="fas fa-user-edit"/>
+              {/*<FolderItem to={"/Products"} text={"Products"}/>*/}
+              
           </ Folder>
-          <GroupTitle text="EXAMPLES" />
-          <FolderItem to="/Orders" text="Widgets" icon="fas fa-th"/>
 
-          <Folder text="Charts">
-              <FolderItem to={"/Charts"} text={"Charts"}/>
-              <FolderItem to={"/Charts"} text={"Charts"}/>
-              <FolderItem to={"/Charts"} text={"Charts"}/>
+          <Folder text="Charts" icon="fas fa-chart-line">
+              <FolderItem to={"/Charts"} text={"Charts"} icon="fas fa-chart-pie"/>
+              <FolderItem to={"/Charts"} text={"Charts"} icon="fas fa-chart-bar"/>
+              <FolderItem to={"/Charts"} text={"Charts"} icon="fas fa-chart-area"/>
           </ Folder>
         </ SideNavBar>
         {/* /.sidebar-menu */}
